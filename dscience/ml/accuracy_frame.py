@@ -9,11 +9,11 @@ from dscience.core.extended_df import *
 logger = logging.getLogger('dscience')
 
 
-class AccuracyCountFrame(BaseExtendedDataFrame):
+class AccuracyCountFrame(SimpleFrame):
 	pass
 
 
-class AccuracyFrame(BaseExtendedDataFrame):
+class AccuracyFrame(OrganizingFrame):
 	"""
 	Has columns 'label', 'score', 'prediction', and 'score_for_prediction', with one row per prediction.
 	"""
@@ -40,7 +40,7 @@ class AccuracyFrame(BaseExtendedDataFrame):
 		else:
 			return self.__class__.retype(self[self['label'].isin(label)])
 
-	def boot_mean(self, b: int, q: float = 0.95) -> BaseExtendedDataFrame:
+	def boot_mean(self, b: int, q: float = 0.95) -> BaseFrame:
 		"""
 		Calculates a confidence interval of the mean from bootstrap over the rows.
 		:param b: The number of bootstrap samples
@@ -53,7 +53,7 @@ class AccuracyFrame(BaseExtendedDataFrame):
 			data.append(samples.groupby('label')[['score']].mean().reset_index())
 		upper = AccuracyFrame(pd.concat(data)).groupby('label').quantile(q).rename(columns={'label': 'upper'})['upper'],
 		lower = AccuracyFrame(pd.concat(data)).groupby('label').quantile(1 - q).rename(columns={'label': 'lower'})['lower']
-		return BaseExtendedDataFrame(pd.merge(upper, lower, left_index=True, right_index=True))
+		return BaseFrame(pd.merge(upper, lower, left_index=True, right_index=True))
 
 	@classmethod
 	def read_csv(cls, path: PathLike, *args, **kwargs):

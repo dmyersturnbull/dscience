@@ -2,7 +2,6 @@ from __future__ import annotations
 import logging
 from typing import Set, Sequence, Union, Callable, Mapping
 from copy import deepcopy
-from pathlib import Path
 import numpy as np
 import pandas as pd
 from clana.visualize_cm import simulated_annealing
@@ -14,14 +13,14 @@ from dscience.core.chars import *
 logger = logging.getLogger('dscience')
 
 
-class ConfusionMatrix(TrivialExtendedDataFrame):
+class ConfusionMatrix(SimpleFrame):
 	"""
 	A wrapper around a confusion matrix as a Pandas DataFrame.
 	The rows are the correct labels, and the columns are the predicted labels.
 	"""
 
 	def __init__(self, data=None, index=None, columns=None, dtype=None, copy=False):
-		super(BaseExtendedDataFrame, self).__init__(data=data, index=index, columns=columns, dtype=dtype, copy=copy)
+		super().__init__(data=data, index=index, columns=columns, dtype=dtype, copy=copy)
 
 	def warn_if_asymmetric(self) -> None:
 		if self.rows != self.cols:

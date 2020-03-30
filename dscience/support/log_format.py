@@ -3,6 +3,39 @@ import logging
 from copy import deepcopy
 
 
+class LogFormatBuilder:
+	"""
+	Builder for those of us who hate the Python logging Formatter syntax and can't remember the options.
+	Example usage:
+	formatter = LoggingFormatterBuilder()\
+		.level_name_fixed_width()\
+		.asc_time()\
+		.thread_name(left=' [', right=':')\
+		.line_num(left='', right=']')\
+		.message(left=': ')\
+		.build()
+	"""
+	_s = None
+	def __init__(self) -> None: self._s = ''
+	def __repr__(self) -> str: return "{}({})".format(self.__class__.__name__, self._s)
+	def __str__(self) -> str: return repr(self)
+
+	def level_num(self, left: str = ' ', right: str = ''): self._s += left + '%(levelno)s' + right; return self
+	def level_name(self, left: str = ' ', right: str = ''): self._s += left + '%(levelname)s' + right; return self
+	def level_name_fixed_width(self, left: str = ' ', right: str = ''): self._s += left + '%(levelname)-8s' + right; return self
+	def name(self, left: str = ' ', right: str = ''): self._s += left + '%(name)s' + right; return self
+	def module(self, left: str = ' ', right: str = ''): self._s += left + '%(module)s' + right; return self
+	def message(self, left: str = ' ', right: str = ''): self._s += left + '%(message)s' + right; return self
+	def thread_id(self, left: str = ' ', right: str = ''): self._s += left + '%(thread)d' + right; return self
+	def thread_name(self, left: str = ' ', right: str = ''): self._s += left + '%(threadName)s' + right; return self
+	def asc_time(self, left: str = ' ', right: str = ''): self._s += left + '%(asctime)s' + right; return self
+	def line_num(self, left: str = ' ', right: str = ''): self._s += left + '%(lineno)d' + right; return self
+	def other(self, fmt: str, left: str = ' ', right: str = ''): self._s += left + fmt + right; return self
+
+	def build(self) -> logging.Formatter:
+		return logging.Formatter(self._s[min(1, len(self._s)):])
+
+
 class PrettyRecordFactory:
 	"""
 	A `logging` formatter
@@ -59,6 +92,11 @@ class PrettyRecordFactory:
 		return logging.Formatter(self.format, self.time_format)
 
 	def modifying(self, ell):
+		"""
+		Set the log factory of a logger to this, and set all of its (current) handlers to use it.
+		:param ell: A logger (ex logging.getLogger(''))
+		:return: This instance
+		"""
 		logging.setLogRecordFactory(self.factory)
 		for handler in ell.handlers:
 			handler.setFormatter(self.formatter)
@@ -66,4 +104,5 @@ class PrettyRecordFactory:
 			handler.setFormatter(self.formatter)
 		return self
 
-__all__ = ['PrettyRecordFactory']
+
+__all__ = ['LogFormatBuilder', 'PrettyRecordFactory']

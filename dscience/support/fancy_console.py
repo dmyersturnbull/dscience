@@ -1,5 +1,6 @@
 from typing import Iterable, Callable, Optional
 import logging
+import enum
 from pathlib import Path
 from colorama import Fore, Style
 import colorama
@@ -59,7 +60,7 @@ class ColorMessages:
 			self._log_fn(message)
 
 
-class Deletion(Enum):
+class Deletion(enum.Enum):
 	NO = 1
 	TRASH = 2
 	HARD = 3

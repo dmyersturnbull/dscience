@@ -8,7 +8,7 @@ from dscience.core.exceptions import MissingColumnError, ConstructionError
 import dscience.core.abcd as abcd
 
 
-class PrettyInternalDataFrame(_InternalDataFrame, abcd.ABC):
+class PrettyFrame(_InternalDataFrame, abcd.ABC):
 	"""
 	A DataFrame with an overridden _repr_html_ that shows the dimensions at the top.
 	"""
@@ -24,7 +24,12 @@ class PrettyInternalDataFrame(_InternalDataFrame, abcd.ABC):
 		Jupyter automatically uses this function.
 		:return: Just a string, which will be wrapped in HTML
 		"""
-		return "<strong>{}: {}</strong>\n{}".format(self.__class__.__name__, self._dims(), super(PrettyInternalDataFrame, self)._repr_html_(), len(self))
+		return "<strong>{}: {}</strong>\n{}".format(
+			self.__class__.__name__,
+			self._dims(),
+			super()._repr_html_(),
+			len(self)
+		)
 
 	def _dims(self) -> str:
 		"""
@@ -37,12 +42,12 @@ class PrettyInternalDataFrame(_InternalDataFrame, abcd.ABC):
 			return "{} rows × {} columns".format(len(self), len(self.columns))
 
 
-class BaseExtendedDataFrame(PrettyInternalDataFrame, abcd.ABC):
+class BaseFrame(PrettyFrame, abcd.ABC):
 	"""
 	An abstract Pandas DataFrame subclass with additional methods.
 	"""
 	def __init__(self, data=None, index=None, columns=None, dtype=None, copy=False):
-		super(BaseExtendedDataFrame, self).__init__(data=data, index=index, columns=columns, dtype=dtype, copy=copy)
+		super().__init__(data=data, index=index, columns=columns, dtype=dtype, copy=copy)
 
 	@classmethod
 	def read_csv(cls, *args, **kwargs):
@@ -76,7 +81,7 @@ class BaseExtendedDataFrame(PrettyInternalDataFrame, abcd.ABC):
 		return CommonTools.only(self[column].unique())
 
 
-class ConvertibleExtendedDataFrame(BaseExtendedDataFrame, abcd.ABC):
+class ConvertibleFrame(BaseFrame, abcd.ABC):
 	"""
 	An extended DataFrame with convert() and vanilla() methods.
 	"""
@@ -143,30 +148,30 @@ class ConvertibleExtendedDataFrame(BaseExtendedDataFrame, abcd.ABC):
 
 	@classmethod
 	@abcd.override_recommended
-	def vanilla(cls, df: BaseExtendedDataFrame) -> pd.DataFrame:
+	def vanilla(cls, df: BaseFrame) -> pd.DataFrame:
 		"""
 		Converts a vanilla Pandas DataFrame to cls.
 		Returns a copy (see note below though).
-		:param df: The BaseExtendedDataFrame or member of cls; will have its __class_ change but will otherwise not be affected
+		:param df: The ConvertibleFrame or member of cls; will have its __class_ change but will otherwise not be affected
 		:return: A true, shallow copy with its __class__ set to pd.DataFrame
 		"""
 		df = df.copy()
 		df.__class__ = pd.DataFrame
 		return df
 
-	def to_vanilla(self, df: BaseExtendedDataFrame) -> pd.DataFrame:
+	def to_vanilla(self, df: BaseFrame) -> pd.DataFrame:
 		"""
-		Instance alias of BaseExtendedDataFrame.vanilla.
+		Instance alias of BaseFrame.vanilla.
 		Returns a copy (see note below though).
-		:param df: The BaseExtendedDataFrame or member of cls; will have its __class_ change but will otherwise not be affected
+		:param df: The ConvertibleFrame or member of cls; will have its __class_ change but will otherwise not be affected
 		:return: A true, shallow copy with its __class__ set to pd.DataFrame
 		"""
 		return self.__class__.vanilla(df)
 
 
-class TrivialExtendedDataFrame(ConvertibleExtendedDataFrame):
+class SimpleFrame(ConvertibleFrame):
 	"""
-	A concrete BaseExtendedDataFrame that does not require special columns.
+	A concrete BaseFrame that does not require special columns.
 	Overrides a number of DataFrame methods to convert before returning.
 	"""
 
@@ -174,64 +179,64 @@ class TrivialExtendedDataFrame(ConvertibleExtendedDataFrame):
 		if isinstance(item, str) and item in self.index.names:
 			return self.index.get_level_values(item)
 		else:
-			return super(TrivialExtendedDataFrame, self).__getitem__(item)
+			return super(SimpleFrame, self).__getitem__(item)
 
 	def drop_duplicates(self, **kwargs):
-		return self._change(super(ConvertibleExtendedDataFrame, self).drop_duplicates(**kwargs))
+		return self._change(super().drop_duplicates(**kwargs))
 
 	def reindex(self, *args, **kwargs):
-		return self._change(super(ConvertibleExtendedDataFrame, self).reindex(*args, **kwargs))
+		return self._change(super().reindex(*args, **kwargs))
 
 	def sort_values(self, by, axis=0, ascending=True, inplace=False,  kind='quicksort', na_position='last'):
-		return self._change(super(ConvertibleExtendedDataFrame, self).sort_values(by=by, axis=axis, ascending=ascending, inplace=inplace, kind=kind, na_position=na_position))
+		return self._change(super().sort_values(by=by, axis=axis, ascending=ascending, inplace=inplace, kind=kind, na_position=na_position))
 
 	def reset_index(self, level=None, drop=False, inplace=False, col_level=0, col_fill=''):
-		return self._change(super(ConvertibleExtendedDataFrame, self).reset_index(level=level, drop=drop, inplace=inplace, col_level=col_level, col_fill=col_fill))
+		return self._change(super().reset_index(level=level, drop=drop, inplace=inplace, col_level=col_level, col_fill=col_fill))
 
 	def set_index(self, keys, drop=True, append=False, inplace=False, verify_integrity=False):
-		return self._change(super(ConvertibleExtendedDataFrame, self).set_index(keys=keys, drop=drop, append=append, inplace=inplace, verify_integrity=verify_integrity))
+		return self._change(super().set_index(keys=keys, drop=drop, append=append, inplace=inplace, verify_integrity=verify_integrity))
 
 	def dropna(self, axis=0, how='any', thresh=None, subset=None, inplace=False):
-		return self._change(super(ConvertibleExtendedDataFrame, self).dropna(axis=axis, how=how, thresh=thresh, subset=subset, inplace=inplace))
+		return self._change(super().dropna(axis=axis, how=how, thresh=thresh, subset=subset, inplace=inplace))
 
 	def fillna(self, value=None, method=None, axis=None, inplace=False, limit=None, downcast=None, **kwargs):
-		return self._change(super(ConvertibleExtendedDataFrame, self).fillna(value=value, method=method, axis=axis, inplace=inplace, limit=limit, downcast=downcast, **kwargs))
+		return self._change(super().fillna(value=value, method=method, axis=axis, inplace=inplace, limit=limit, downcast=downcast, **kwargs))
 
 	def ffill(self, axis=None, inplace=False, limit=None, downcast=None):
-		return self._change(super(ConvertibleExtendedDataFrame, self).ffill(axis=axis, inplace=inplace, limit=limit, downcast=downcast))
+		return self._change(super().ffill(axis=axis, inplace=inplace, limit=limit, downcast=downcast))
 
 	def bfill(self, axis=None, inplace=False, limit=None, downcast=None):
-		return self._change(super(ConvertibleExtendedDataFrame, self).bfill(axis=axis, inplace=inplace, limit=limit, downcast=downcast))
+		return self._change(super().bfill(axis=axis, inplace=inplace, limit=limit, downcast=downcast))
 
 	def abs(self):
-		return self._change(super(ConvertibleExtendedDataFrame, self).abs())
+		return self._change(super().abs())
 
 	def rename(self, *args, **kwargs):
-		return self._change(super(ConvertibleExtendedDataFrame, self).rename(*args, **kwargs))
+		return self._change(super().rename(*args, **kwargs))
 
 	def replace(self, to_replace=None, value=None, inplace=False, limit=None, regex=False, method='pad'):
-		return self._change(super(ConvertibleExtendedDataFrame, self).replace(to_replace=to_replace, value=value, inplace=inplace, limit=limit, regex=regex, method=method))
+		return self._change(super().replace(to_replace=to_replace, value=value, inplace=inplace, limit=limit, regex=regex, method=method))
 
 	def applymap(self, func):
-		return self._change(super(ConvertibleExtendedDataFrame, self).applymap(func))
+		return self._change(super().applymap(func))
 
 	def astype(self, dtype, copy=True, errors='raise', **kwargs):
-		return self._change(super(ConvertibleExtendedDataFrame, self).astype(dtype=dtype, copy=copy, errors=errors, **kwargs))
+		return self._change(super().astype(dtype=dtype, copy=copy, errors=errors, **kwargs))
 
 	def drop(self, labels=None, axis=0, index=None, columns=None, level=None, inplace=False, errors='raise'):
-		return self._change(super(ConvertibleExtendedDataFrame, self).drop(labels=labels, axis=axis, index=index, columns=columns, level=level, inplace=inplace, errors=errors))
+		return self._change(super().drop(labels=labels, axis=axis, index=index, columns=columns, level=level, inplace=inplace, errors=errors))
 
 
 #@abcd.final
-class FinalExtendedDataFrame(TrivialExtendedDataFrame):
+class FinalFrame(SimpleFrame):
 	"""
-	A ready-to-go TrivialExtendedDataFrame that should not be overridden.
+	A ready-to-go SimpleFrame that should not be overridden.
 	"""
 
 
-class ExtendedDataFrame(ConvertibleExtendedDataFrame):
+class OrganizingFrame(ConvertibleFrame):
 	"""
-	A concrete BaseExtendedDataFrame that has required columns and index names.
+	A concrete BaseFrame that has required columns and index names.
 	"""
 
 	@classmethod
@@ -312,4 +317,4 @@ class ExtendedDataFrame(ConvertibleExtendedDataFrame):
 				raise MissingColumnError("Missing column or index name {}".format(c), key=c)
 
 
-__all__ = ['BaseExtendedDataFrame', 'TrivialExtendedDataFrame', 'FinalExtendedDataFrame', 'ExtendedDataFrame', 'ConvertibleExtendedDataFrame']
+__all__ = ['BaseFrame', 'SimpleFrame', 'FinalFrame', 'OrganizingFrame', 'ConvertibleFrame']

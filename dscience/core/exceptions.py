@@ -31,8 +31,12 @@ class ErrorUtils:
 		@wraps(names)
 		def dec(cls):
 			def _doc(doc: str) -> str:
+				if doc is None:
+					doc = ''
+				elif not doc.endswith('.'):
+					doc += '.'
 				return doc + '\n' + 'Supports attributes:\n' + '\n'.join([
-					'    • ' + name + ': ' + str(dtype)
+					'    • ' + name + ': ' + str(dtype).replace("<class '", '').replace("'>", '')
 					for name, dtype in names.items()
 				])
 			def _init(self, *args, **kwargs) -> None:
@@ -49,6 +53,7 @@ class ErrorUtils:
 						setattr(self, name, None)
 					nextclass = thisclass.__mro__[1]
 					# noinspection PyArgumentList
+					# be careful! use `thisclass` as an argument (not self)
 					super(thisclass, self).__init__(*args, __thisclass=nextclass, **kwargs)
 			cls.__init__ = _init
 			cls.__doc__ = _doc(cls.__doc__)
@@ -192,6 +197,7 @@ class ParsingError(Error):                       """Syntax error when parsing"""
 @ErrorUtils.args(item=KeyLike)
 class UnrecognizedKeyError(_ParsingLikeError):   """A configuration entry was set, but the code doesn't recognize that name."""
 
+@ErrorUtils.args(item=KeyLike)
 class _WrapLikeError(Error): pass
 class DataIntegrityError(_WrapLikeError):        """Data is missing, incomplete, or invalid. More complex than a missing value."""
 class AlgorithmError(_WrapLikeError):            """A wrapper for some less meaningful error."""

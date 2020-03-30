@@ -13,8 +13,7 @@ T = TypeVar('T', covariant=True)
 
 class Dscience:
 	name = 'dscience'
-	version = '0.1.1'
-	description = 'A collection of Python snippets for the Kokel Lab'
+	version = '0.1.0'
 	logger = logging.getLogger('dscience')
 
 logger = Dscience.logger
@@ -59,7 +58,7 @@ class LazyWrapped(Generic[V], metaclass=abc.ABCMeta):
 	def __str__(self):
 		return self._name + '[' + (str(self._v) if self.is_defined else '⌀') + ']'
 	def __eq__(self, other):
-		return type(self) == type(other) and self.is_defined == other.__exists and type(self._v) == type(other.__v) and self._v == other.__v
+		return type(self) == type(other) and self.is_defined == other.is_defined and self.raw_value == other.raw_value
 
 
 class PlainLazyWrapped(LazyWrapped, metaclass=abc.ABCMeta):
@@ -217,4 +216,4 @@ class OptRow:
 		return self._row == other._row
 
 __version__ = Dscience.version
-__all__ = ['JsonEncoder', 'SmartEnum', 'frozenlist', 'PathLike', 'OptRow', 'LazyWrap']
+__all__ = ['JsonEncoder', 'SmartEnum', 'frozenlist', 'PathLike', 'OptRow', 'LazyWrap', 'Dscience']

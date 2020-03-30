@@ -18,7 +18,7 @@ from dscience.support.flexible_logger import *
 from dscience.support.toml_data import *
 from dscience.core.iterators import *
 from dscience.core import SmartEnum, OptRow
-from dscience.support.record_factory import *
+from dscience.support.log_format import *
 
 class Tools(
 	CallTools, CommonTools, ConsoleTools, LoopTools, NumericTools, PandasTools,

@@ -1,6 +1,6 @@
 import pytest
 from datetime import datetime
-from dscience.support.templates import *
+from dscience.support.magic_template import *
 
 class TestTemplates:
 	def test(self):

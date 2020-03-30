@@ -9,7 +9,7 @@ from dscience.ml.confusion_matrix import *
 from dscience.ml.accuracy_frame import *
 
 
-class DecisionFrame(ExtendedDataFrame):
+class DecisionFrame(OrganizingFrame):
 	"""
 	An n × m matrix of probabilities (or scores) from a classifier.
 	The n rows are samples, and the m columns are predictions. The values are the confidence or pobability of prediction.

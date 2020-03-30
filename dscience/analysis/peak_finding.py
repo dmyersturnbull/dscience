@@ -154,8 +154,7 @@ class PeakFinder:
             peaks = np.array([], dtype=np.intp)
         try:
             # Safely convert to C-contiguous array of type np.intp
-            peaks = peaks.astype(np.intp, order='C', casting='safe',
-                                 subok=False, copy=False)
+            peaks = peaks.astype(np.intp, order='C', casting='safe', subok=False, copy=False)
         except TypeError:
             raise TypeError("Cannot safely cast `peaks` to dtype('intp')")
         if peaks.ndim != 1:
@@ -228,7 +227,7 @@ class PeakFinder:
             minus = data.take(locs - shift, axis=axis, mode=mode)
             results &= comparator(main, plus)
             results &= comparator(main, minus)
-            if~results.any():
+            if ~results.any():
                 return results
         return results
 
@@ -531,4 +530,3 @@ class PeakFinder:
 
 
 __all__ = ['PeakFinder']
-

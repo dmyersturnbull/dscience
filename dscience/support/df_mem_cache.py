@@ -11,7 +11,7 @@ from dscience.core.internal import nicesize
 
 K = TypeVar('K')
 
-class FacadePolicy(Generic[K]):
+class MemCachePolicy(Generic[K]):
 
 	def should_archive(self) -> bool:
 		raise NotImplementedError()
@@ -28,13 +28,15 @@ class FacadePolicy(Generic[K]):
 
 	def accessed(self, key: K) -> None:
 		pass
+
 	def added(self, key: K, value: pd.DataFrame) -> None:
 		pass
+
 	def removed(self, key: K) -> None:
 		pass
 
 
-class MemoryLimitingPolicy(FacadePolicy, Generic[K], ABC):
+class MemoryLimitingPolicy(MemCachePolicy, Generic[K], ABC):
 
 	def __init__(self, max_memory_bytes: Optional[int] = None, max_fraction_available_bytes: Optional[float] = None):
 		self._max_memory_bytes = max_memory_bytes
@@ -112,8 +114,8 @@ class MemoryMruPolicy(MemoryLimitingPolicy, Generic[K]):
 		return iter([k for k, v in reversed(sorted(self._last_accessed.items(), key=operator.itemgetter(1)))])
 
 
-class DfFacade(Generic[K]):
-	def __init__(self, loader: Callable[[K], pd.DataFrame], policy: FacadePolicy):
+class DfMemCache(Generic[K]):
+	def __init__(self, loader: Callable[[K], pd.DataFrame], policy: MemCachePolicy):
 		self._loader = loader
 		self._items = {}  # type: Dict[K, pd.DataFrame]
 		self._policy = policy
@@ -168,4 +170,4 @@ class DfFacade(Generic[K]):
 		return "{}({})".format(type(self).__name__, self._policy)
 
 
-__all__ = ['FacadePolicy', 'DfFacade', 'MemoryLimitingPolicy', 'MemoryLruPolicy', 'MemoryMruPolicy']
+__all__ = ['MemCachePolicy', 'DfMemCache', 'MemoryLimitingPolicy', 'MemoryLruPolicy', 'MemoryMruPolicy']

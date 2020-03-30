@@ -15,15 +15,15 @@ logger = logging.getLogger('dscience')
 
 
 class FlatGoTerm:
-	"""A Gene Ontology term.
-		Note:
-			Not to be confused with GOTerm in goatools: obo_parser.GOTerm
-		Attributes:
-			ID (str); ex: GO:0005737
-			kind (str: 'P'==process, 'C'==component, 'F'==function)
-			description (str)
-			sourceId (str); ex: IDA
-			sourceName (str); ex: UniProtKB
+	"""
+	A Gene Ontology term.
+	Not to be confused with GOTerm in goatools: obo_parser.GOTerm
+	Attributes:
+		ID (str); ex: GO:0005737
+		kind (str: 'P'==process, 'C'==component, 'F'==function)
+		description (str)
+		sourceId (str); ex: IDA
+		sourceName (str); ex: UniProtKB
 	"""
 	def __init_(self, identifier: str, kind: str, description: str, source_id: str, source_name: str):
 		self.ID = identifier

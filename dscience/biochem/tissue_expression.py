@@ -7,8 +7,9 @@ from dscience.core.extended_df import *
 from dscience.core.exceptions import LookupFailedError
 
 
-class TissueTable(TrivialExtendedDataFrame):
-	"""Contains a Pandas DataFrame of tissue- and cell type-level expression for genes from the Human Protein Atlas.
+class TissueTable(SimpleFrame):
+	"""
+	Contains a Pandas DataFrame of tissue- and cell type-level expression for genes from the Human Protein Atlas.
 	Example usage:
 		tt = TissueTable()
 		tt.tissue('MKNK2') # returns a DataFrame with mean expression of MKNK2 per tissue type. MKN2 is the HGNC symbol.

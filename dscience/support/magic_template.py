@@ -3,7 +3,6 @@ from typing import Mapping, Callable, Union, Any, Optional, Generic, TypeVar, Ty
 from datetime import datetime
 import logging
 from pathlib import PurePath, Path
-from dscience.core.exceptions import FileDoesNotExistError
 from dscience.core import PathLike, LazyWrap
 logger = logging.getLogger('dscience')
 
@@ -55,15 +54,19 @@ class MagicTemplate:
 		})
 		return self
 
-	def register_magic(self, name: str, shell = None) -> None:
-		from IPython import get_ipython
-		if shell is None: shell = get_ipython()
-		shell.register_magic_function(self._fill, magic_name=name)
+	def register_magic(self, name: str, shell=None) -> None:
+		if shell is None:
+			from IPython import get_ipython
+			shell = get_ipython()
+		shell.register_magic_function(self._fill, magic_kind='line_cell', magic_name=name)
 
 	def parse(self, line: str = '') -> str:
 		return self.__replace(self._reader(), line)
 
-	def _fill(self, line, shell):
+	def _fill(self, line, shell=None):
+		if shell is None:
+			from IPython import get_ipython
+			shell = get_ipython()
 		text = self.__replace(self._reader(), line)
 		shell.set_next_input(text, replace=True)
 

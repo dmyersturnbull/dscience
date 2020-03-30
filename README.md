@@ -7,6 +7,7 @@ Integrated with Numpy and Pandas 1.0+, with few other dependencies. Import it, o
 Provides:
 - Static utilities (`Tools`)
 - Useful decorators (`abcd`)
+- Meaningful exceptions and warnings that store info for recovery
 - A model for augmented Pandas DataFrames (see below)
 - Jupyter notebook utilities (`J`)
 - Transparently caching resources (ex `TissueTable`)
@@ -16,20 +17,23 @@ Provides:
 
 The following documentation is not comprehensive. Search the code for additional classes.
 
-#### _kitchen sink_-style import
+### _kitchen sink_-style import
 
 To import common classes:
 ```python
 from dscience.full import *
+print(Tools)
 ```
 This will load `Tools`, `Chars`, `abcd`, and a few others.
 
 
-#### `Tools` and `Chars`
+### `Tools` and `Chars`
 
 The `Tools` class has various small utility functions:
 
 ```python
+def fn_to_try():
+    raise ValueError('')
 from dscience.full import *
 Tools.git_description('.').tag                # the tag, or None
 Tools.ms_to_minsec(7512000)                   # '02:05:12'
@@ -39,7 +43,7 @@ Tools.pretty_function(list)                   # '<list>'
 Tools.strip_paired_brackets('(ab[cd)')   # 'ab[cd'
 Tools.iceilopt(None), Tools.iceilopt(5.3)     # None, 6
 Tools.succeeds(fn_to_try)                     # True or False
-Tools.or_null(fn_might_fail)                  # None if it failed
+Tools.or_null(fn_to_try)                      # None if it failed
 Tools.only([1]), Tools.only([1, 2])           # 1, MultipleMatchesError
 Tools.is_probable_null(np.nan)                # True
 Tools.read_properties_file('abc.properties')  # returns a dict
@@ -53,7 +57,7 @@ print(Chars.hairspace)             # hair space
 print(Chars.range(1, 2))           # '1–2' (with en dash)
 ```
 
-#### decorators with `abcd`
+### decorators with `abcd`
 
 
 The `abcd` package has useful decorators.
@@ -80,7 +84,41 @@ print('obj')  # prints 'CannotChange(x='sdf')
 obj.x = 5  # breaks!!
 ``` 
 
-#### other small utilities
+### DataFrame subclasses
+
+See `BaseFrame`, `SimpleFrame`, `FinalFrame`, and `OrganizingFrame`.
+These are subclasses of `pd.DataFrame` that provide extra methods and display nicely.
+
+### Exceptions and warnings
+
+Sometimes certain modes of failure are expected (think: checked exceptions).
+We want callers to be able to handle and potentially recover from them, but granularity in exception types and relevant values are needed.
+For example, if we couldn't load a "resource" file, what was the path?
+If something was wrong with a database record, what was its ID?
+Examples of exceptions defined here are `LockedError`, `IncompatibleDataError`, `HashValidationFailedError`, `MissingEnvVarError`, `MultipleMatchesError`, `AlreadyUsedError`, and `IllegalPathError`.
+
+```python
+import time
+from dscience.core.exceptions import *
+resource = Path('resources/mydata.dat')
+def update_resource():
+    if resource.with_suffix('.lockfile').exists():
+        raise LockedError('Resource is locked and may be in use.', key=resource)
+    # ... do stuff
+try:
+    update_resource()
+except LockedError as e:
+    if e.key == resource:
+        print('{} is locked. Waiting 5s and trying again.'.format(e.key))
+        print(e.info())
+        time.sleep(5.0)
+        update_resource()
+    else:
+        raise e
+    
+```
+
+### other small utilities
 A couple of other things were imported, including `DevNull`, `DelegatingWriter`, and `TieredIterator`.
 
 You can also make a Pandas DataFrame with pretty display and convenience functions using `TrivialExtendedDataFrame`.
@@ -88,14 +126,16 @@ You can also make a Pandas DataFrame with pretty display and convenience functio
 `LazyWrap` creates lazy classes, extremely useful in some cases:
 
 ```python
+from datetime import datetime
 from dscience.core import LazyWrap
+def fetch_datetime(): return datetime.now()
 RemoteTime = LazyWrap.new_type('RemoteTime', fetch_datetime)
-do_something()
 now = RemoteTime()
+# nothing happens until now:
 print(now.get())
 ```
 
-#### _a la carte_-style Tools
+### _a la carte_-style Tools
 
 `Tools` actually subclasses from several Tools-like classes. You can import only the ones you want instead:
 
@@ -109,7 +149,7 @@ if ConsoleTools.prompt_yes_no('Delete?'):
     ConsoleTools.slow_delete('my_dir', wait=10)
 ```
 
-#### `J` for Jupyter display
+### `J` for Jupyter display
 
 The class `J` has tools for display in Jupyter:
 
@@ -120,7 +160,7 @@ if J.prompt('Really delete?'):   # ask the user
     J.bold('Deleting.')
 ```
 
-#### project organization
+### project organization
 
 - `dscience.core` contains code used internally in dscience, including some that are useful in their own right
 - `dscience.tools` contains the static tool classes like `StringTools`
@@ -130,20 +170,24 @@ if J.prompt('Really delete?'):   # ask the user
 - `dscience.ml` contains models for machine learning, including `DecisionFrame` and `ConfusionMatrix`
 
 
-#### support package
+### support package
 
 These classes range from common to very obscure.
 
 `PrettyRecordFactory` makes beautiful aligned log messages.
 
 ```python
+import logging
+from dscience.support.log_format import *
 logger = logging.getLogger('myproject')
-log_factory = KaleRecordFactory(7, 13, 5).modifying(logger)
-run_analysis()
-# output:
-	[20191228:14:20:06] kale>    datasets      :77    INFO    | Downloading QC-DR...
-	[20191228:14:21:01] kale>    __init__      :185   NOTICE  | Downloaded QC-DR with 8 runs, 85 names, and 768 wells.
-	[20191229:14:26:04] kale>    __init__      :202   INFO    | Registered new type RandomForestClassifier:n_jobs=4,n_estimators=8000
+log_factory = PrettyRecordFactory(7, 13, 5).modifying(logger)
+```
+
+Output from an analysis might then be...
+```
+[20191228:14:20:06] kale>    datasets      :77    INFO    | Downloading QC-DR...
+[20191228:14:21:01] kale>    __init__      :185   NOTICE  | Downloaded QC-DR with 8 runs, 85 names, and 768 wells.
+[20191229:14:26:04] kale>    __init__      :202   INFO    | Registered new type RandomForestClassifier:n_jobs=4,n_estimators=8000
 ```
 
 `TomlData` is a wrapper around toml dict data.
@@ -151,6 +195,10 @@ run_analysis()
 `MagicTemplate` can build and register a Jupyter magic function that fills the cell from a template. Ex:
 
 ```python
+import os
+from dscience.support.magic_template import *
+def get_current_resource():
+    return 'something dynamic'
 template_text = '''
 # My notebook
 <Write a description here>
@@ -169,7 +217,7 @@ MagicTemplate.from_text(template_text)\
 Now you can type in `%mymagic` to replace with the parsed template.
 
 
-#### biochem package
+### biochem package
 
 `WB1` is a multiwell plate with 1-based coordinates (read _well base-1_).
 
@@ -191,7 +239,7 @@ tissues.tissue('MKNK2')
 ```
 
 
-#### ml package
+### ml package
 
 ```python
 from dscience.ml.confusion_matrix import ConfusionMatrix
@@ -227,7 +275,7 @@ Other packages have additional requirements.
 The authors release these contents and documentation files under the terms of the [Apache License, version 2.0](https://www.apache.org/licenses/LICENSE-2.0).
 The project was developed to support research at the Kokel Lab, fulfill requirements for [UCSF QBC](http://qbc.ucsf.edu/) PhD programs, and be useful to the public.
 
-#### authors
+### authors
 - Douglas Myers-Turnbull (primary)
 - Chris Ki (contributor)
 - Cole Helsell (contributor)

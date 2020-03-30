@@ -197,7 +197,9 @@ class WB0(_WB):
 	def get_base(cls):
 		return 0
 
+@abcd.copy_docstring(WB0)
 class ParsingWB0(WB0, ParsingWB): pass
+@abcd.copy_docstring(WB1)
 class ParsingWB1(WB1, ParsingWB): pass
 
 

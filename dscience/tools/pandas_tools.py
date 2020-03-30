@@ -47,25 +47,25 @@ class PandasTools(BaseTools):
 		PandasTools.dict_to_df(dct, keys, values).to_csv(Path(path))
 
 	@classmethod
-	def extended_df(cls, df: pd.DataFrame, class_name: Optional[str] = None) -> ConvertibleExtendedDataFrame:
+	def extended_df(cls, df: pd.DataFrame, class_name: Optional[str] = None) -> ConvertibleFrame:
 		"""
-		Wrap `df` in an extended dataframe (ConvertibleExtendedDataFrame, which is its superclass).
+		Wrap `df` in an extended dataframe (ConvertibleFrame, which is its superclass).
 		The returned Pandas DataFrame will have additional methods and better display in Jupyter.
-		- If `df` is already a `ConvertibleExtendedDataFrame`, will just return it.
+		- If `df` is already a `ConvertibleFrame`, will just return it.
 		- Otherwise:
 			* Creates a new class with name `class_name` if `class_name` is non-null.
-			* Otherwise wraps in a `FinalExtendedDataFrame`.
+			* Otherwise wraps in a `FinalFrame`.
 		:param df: Any Pandas DataFrame.
-		:param class_name: Only applies if `df` isn't already a `ConvertibleExtendedDataFrame`
+		:param class_name: Only applies if `df` isn't already a `ConvertableFrame`
 		:return: A copy of `df` of the new class
 		"""
-		if isinstance(df, ConvertibleExtendedDataFrame):
+		if isinstance(df, ConvertibleFrame):
 			return df
 		elif isinstance(df, pd.DataFrame):
 			if class_name is None:
-				return FinalExtendedDataFrame(df)
+				return FinalFrame(df)
 			else:
-				class X(TrivialExtendedDataFrame): pass
+				class X(SimpleFrame): pass
 				X.__name__ = class_name
 				return X(df)
 		else:
@@ -73,7 +73,7 @@ class PandasTools(BaseTools):
 
 	@classmethod
 	def series_to_df(cls, series, column: str) -> pd.DataFrame:
-		return TrivialExtendedDataFrame(series).reset_index().rename(columns={0: column})
+		return SimpleFrame(series).reset_index().rename(columns={0: column})
 
 
 __all__ = ['PandasTools']

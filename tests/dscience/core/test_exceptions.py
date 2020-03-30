@@ -30,6 +30,12 @@ class TestExceptions:
 		assert E('a', key=5) != E('a')
 		assert E('a') == E('a')
 
+	def test_doc(self):
+		assert E.__doc__ is not None
+		e = E.__doc__.splitlines()
+		assert len(e) >= 2
+		assert e[-2].endswith('expected: str')
+		assert e[-1].endswith('actual: str')
 
 if __name__ == '__main__':
 	pytest.main()

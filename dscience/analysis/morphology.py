@@ -6,7 +6,8 @@ from skimage.morphology import convex_hull_image
 
 
 class ConvexHullCropper:
-	"""Auto-crops images based on their convex hull, assuming a white or transparent background.
+	"""
+	Auto-crops images based on their convex hull, assuming a white or transparent background.
 	Idea & code from Sandipan Dey's answer on
 	https://stackoverflow.com/questions/14211340/automatically-cropping-an-image-with-python-pil
 	"""
