@@ -9,14 +9,10 @@ import numpy as np
 from dscience.core.exceptions import ImmutableError
 # noinspection PyProtectedMember
 from dscience.core.internal import PathLike, look as _look
+from dscience.core.meta import *
 T = TypeVar('T', covariant=True)
 
-class Dscience:
-	name = 'dscience'
-	version = '0.1.0'
-	logger = logging.getLogger('dscience')
-
-logger = Dscience.logger
+logger = logging.getLogger('dscience')
 
 class JsonEncoder(json.JSONEncoder):
 	def default(self, obj):

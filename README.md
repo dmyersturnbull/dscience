@@ -1,25 +1,30 @@
 # `dscience`
 
 
-A package of Python 3.7+ snippets and tools for everyday coding, data science, and bioinformatics.
-Integrated with Numpy and Pandas 1.0+, with few other dependencies. Import it, or just copy code you like into your project.
+A lightweight Python 3 library for everyday coding, data science, and bioinformatics.
+Integrated with Numpy and Pandas 1.0+, with few other dependencies.
 
 Provides:
-- Static utilities (`Tools`)
-- Useful decorators (`abcd`)
-- Meaningful exceptions and warnings that store info for recovery
-- A model for augmented Pandas DataFrames (see below)
-- Jupyter notebook utilities (`J`)
-- Transparently caching resources (ex `TissueTable`)
-- Machine learning wrapper classes (ex `ConfusionMatrix`)
-- Core support classes (ex `SmartEnum` and `frozenlist`)
-- Miscellaneous support classes (ex `TomlData`)
+- Many utility functions, data types, and decorators
+- Exceptions that store useful attributes to help calling code recover
+- Pandas DataFrames with required columns / enforced structure and extra methods
+- Simple utilities for Jupyter notebooks
+- Algorithms, bioinformatics resources, and machine learning support
+
 
 The following documentation is not comprehensive. Search the code for additional classes.
 
-### _kitchen sink_-style import
+[![CircleCI](https://circleci.com/gh/kokellab/dscience.svg?style=shield)](https://circleci.com/gh/kokellab/dscience)
 
-To import common classes:
+### getting started
+
+```bash
+pip install git+https://github.com/kokellab/klgists.git@0.1.0#egg=dscience
+pip install "dscience[numeric] @ git+ssh://git@github.com/kokellab/dscience.git@0.1.0#egg=dscience"
+```
+
+Dependencies are organized into strict requirements, `numeric`, `db`, `extra`, `jupyter`, `extra`, and `test`.
+
 ```python
 from dscience.full import *
 print(Tools)
@@ -249,33 +254,17 @@ mx = mx.sort(cooling_factor=0.98).symmetrize().triagonalize()   # sort to show b
 ```
 
 
+## contributing
 
-### requirements
-
-Only a few packages are required for `core` and `Tools`. 
-- python       >= 3.7
-- pandas       >= 1.0
-- numpy        >= 1.18
-- natsort      >= 7.0
-
-Other packages have additional requirements.
-- python       >= 3.8
-- scikit-learn >= 0.22
-- scipy        >= 1.4
-- scikit-image >= 0.16
-- statsmodels  >= 0.11
-- tensorflow   >= 2.1
-- matplotlib   >= 3.2
-- uniprot, goatools, chemspipy, etc.
-
-[![CircleCI](https://circleci.com/gh/kokellab/klgists.svg?style=shield)](https://circleci.com/gh/kokellab/klgists)
+This project is under active development. [New issues](https://github.com/kokellab/dscience/issues) and pull requests are welcome.
+We use tabs for indentation and will eventually use [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/).
 
 ## license
 
 The authors release these contents and documentation files under the terms of the [Apache License, version 2.0](https://www.apache.org/licenses/LICENSE-2.0).
 The project was developed to support research at the Kokel Lab, fulfill requirements for [UCSF QBC](http://qbc.ucsf.edu/) PhD programs, and be useful to the public.
 
-### authors
+Authors and contributors:
 - Douglas Myers-Turnbull (primary)
 - Chris Ki (contributor)
 - Cole Helsell (contributor)

@@ -1,7 +1,5 @@
 import os, json, logging
 from typing import Tuple, Iterator, Dict, Optional, Union
-import pymysql
-import peewee
 from dscience.core.exceptions import FileDoesNotExistError, ContradictoryRequestError
 
 
@@ -77,11 +75,13 @@ class Connection:
 		return cls(**dct)
 
 	def connect_with_peewee(self):
+		import peewee
 		self.peewee_database = peewee.MySQLDatabase(self._db_name, **self._connection_params())
 		self.peewee_database.connect()
 		return self.peewee_database
 
 	def connect_with_plain_sql(self):
+		import pymysql
 		self.plain_sql_database = pymysql.connect(**self._connection_params(), db=self._db_name, cursorclass=pymysql.cursors.DictCursor)
 		logging.debug("Opened raw pymysql connection to database {}".format(self._db_name))
 
