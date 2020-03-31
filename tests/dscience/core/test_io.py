@@ -30,6 +30,10 @@ class TestIo:
 		assert o('r') == o('r')
 		assert o('w') == o('o')
 		assert o('w') != o('a')
+		assert o('o') == 'w'
+		assert o('o') == 'o'
+		assert o('wd') != 'w'
+		assert o('wd') == 'wd'
 
 if __name__ == '__main__':
 	pytest.main()

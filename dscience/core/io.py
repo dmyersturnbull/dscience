@@ -127,11 +127,9 @@ class OpenMode(str):
 	# noinspection PyMissingConstructor
 	def __init__(self, mode: str):
 		self._raw = mode.replace('w', 'o')
-		self.internal = self.__strip()
+		self.internal = self._raw.replace('o', 'w').replace('s', 'w').replace('z', '').replace('i', '').replace('d', '')
 	def __repr__(self): return self.internal
 	def __str__(self): return self.internal
-	def __strip(self):
-		return self._raw.replace('o', 'w').replace('s', 'w').replace('z', '').replace('i', '').replace('d', '')
 	@property
 	def read(self) -> bool: return 'r' in self._raw
 	@property
@@ -152,7 +150,11 @@ class OpenMode(str):
 	def gzipped(self) -> bool: return 'z' in self._raw
 
 	def __eq__(self, other):
-		return str(self).replace('w', 'o') == str(other).replace('w', 'o')
+		if isinstance(other, OpenMode):
+			return self._raw==other._raw
+		elif isinstance(other, str):
+			return self._raw==other.replace('w', 'o')
+		return False
 
 
 def null_context():

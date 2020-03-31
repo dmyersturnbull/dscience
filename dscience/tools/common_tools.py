@@ -140,7 +140,7 @@ class CommonTools(BaseTools):
 			return None
 
 	@classmethod
-	def iter_rc(cls, n_rows: int, n_cols: int) -> Generator[Tuple[int, int], None, None]:
+	def iter_rowcol(cls, n_rows: int, n_cols: int) -> Generator[Tuple[int, int], None, None]:
 		"""
 		An iterator over (row column) pairs for a row-first traversal of a grid with `n_cols` columns.
 		Ex:

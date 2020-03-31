@@ -4,7 +4,7 @@
 from pathlib import Path
 from distutils.core import setup
 
-VERSION = '0.1.1'
+VERSION = '0.1.2'
 
 
 readme = Path('README.md').read_text(encoding='utf8')

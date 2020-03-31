@@ -48,7 +48,12 @@ class WebResource:
 							shutil.copyfileobj(f_in, f_out)
 				else:
 					shutil.move(extracted, to_path)
-				self._info_path.write_text('url='+self._url+'\n' + 'datetime_downloaded='+now.isoformat()+'\n' + 'response='+str(response).replace('\n', ' |')+'\n')
+				self._info_path.write_text(
+					'url='+self._url+'\n'
+					+ 'datetime_downloaded='+now.isoformat()+'\n'
+					+ 'response='+str(response).replace('\n', ' |')+'\n',
+					encoding='utf-8'
+				)
 			finally:
 				if extracted is not None and extracted.exists():
 					extracted.unlink()

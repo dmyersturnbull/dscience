@@ -35,7 +35,7 @@ class PandasTools(BaseTools):
 	@classmethod
 	def csv_to_dict(cls, path: PathLike) -> Dict[Any, Any]:
 		d = pd.read_csv(Path(path))
-		return PandasTools.df_to_dict(d)
+		return cls.df_to_dict(d)
 
 	@classmethod
 	def dict_to_df(cls, dct: Mapping[Any, Any], keys: str = 'name', values: str = 'value') -> pd.DataFrame:
@@ -44,7 +44,7 @@ class PandasTools(BaseTools):
 
 	@classmethod
 	def dict_to_csv(cls, dct: Mapping[Any, Any], path: PathLike, keys: str = 'name', values: str = 'value') -> None:
-		PandasTools.dict_to_df(dct, keys, values).to_csv(Path(path))
+		cls.dict_to_df(dct, keys, values).to_csv(Path(path))
 
 	@classmethod
 	def extended_df(cls, df: pd.DataFrame, class_name: Optional[str] = None) -> ConvertibleFrame:

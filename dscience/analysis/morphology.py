@@ -23,7 +23,7 @@ class ConvexHullCropper:
 		img_box = Image.fromarray((chull * 255).astype(np.uint8)).getbbox()
 		return Image.fromarray(im_array).crop(img_box)
 
-	def crop_file(self, from_path: str, to_path: str):
+	def crop_file(self, from_path: str, to_path: str) -> None:
 		im = imread(from_path)
 		cropped = self.crop(im)
 		cropped.save(to_path)

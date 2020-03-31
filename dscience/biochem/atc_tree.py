@@ -118,7 +118,7 @@ class AtcParser:
 		self.cache_dir = Path(cache_dir)
 		self.cache_dir.mkdir(parents=True, exist_ok=True)
 
-	def load(self, force_download: bool = False):
+	def load(self, force_download: bool = False) -> AtcTree:
 		atcs = {'/': Atc.root()}
 		if not force_download and Path(self.cache_dir, 'is-done').exists():
 			logger.debug("Loading ATC tree from cache...")
@@ -149,11 +149,11 @@ class AtcParser:
 		for i in range(1, n_pages+1):  # downloading page 1 twice, but whatever
 			response = requests.get(AtcParser.URL.format(page=i))
 			logger.debug("Downloading page {} of {}.".format(i, n_pages))
-			(self.cache_dir / 'page-{}.txt'.format(i)).write_text(response.text)
+			(self.cache_dir / 'page-{}.txt'.format(i)).write_text(response.text, encoding='utf-8')
 			data = response.json()['Annotations']
 			for atc in self._parse(data['Annotation'], atcs):
-					pass
-			(self.cache_dir / '.is_done').write_text(str(datetime.now()))
+				pass
+			(self.cache_dir / '.is_done').write_text(str(datetime.now()), encoding='utf-8')
 	
 	def _parse(self, items: list, atcs: dict):
 		pat = re.compile(r'^(?:<[^>]+>)? *([^ ]+) +- +(?:<[^>]+>)? *([^<]+).*$')

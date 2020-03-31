@@ -174,9 +174,9 @@ class BaseTools:
 		if log is None:
 			return logger.info
 		elif isinstance(log, str) and log.lower() in ['print', 'stdout']:
-			return lambda msg: sys.stdout.write(msg)
+			return sys.stdout.write
 		elif log == 'stderr':
-			return lambda msg: sys.stderr.write(msg)
+			return sys.stderr.write
 		elif isinstance(log, int):
 			return getattr(logger, logging.getLevelName(log).lower())
 		elif isinstance(log, str):

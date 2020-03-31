@@ -1,7 +1,7 @@
 from typing import SupportsBytes, Sequence, Mapping, Iterable, Any, Union, Optional, Generator
 from pathlib import PurePath, Path
 import stat
-import os, tempfile
+import tempfile
 from datetime import datetime
 import re
 import shutil
@@ -10,6 +10,7 @@ from getpass import getuser
 import gzip, json, hashlib
 from contextlib import contextmanager
 import logging
+import dill
 import pandas as pd
 from dscience.core.web_resource import *
 from dscience.core import JsonEncoder
@@ -37,6 +38,18 @@ except ImportError:
 class FilesysTools(BaseTools):
 
 	@classmethod
+	def pkl(cls, stuff, path: PathLike, protocol: int = 4) -> None:
+		"""Save to a file with dill."""
+		with Path(path).open('wb') as f:
+			dill.dump(stuff, f, protocol=protocol)
+
+	@classmethod
+	def unpkl(cls, path: PathLike):
+		"""Load a file with dill."""
+		with Path(path).open('rb') as f:
+			return dill.load(f)
+
+	@classmethod
 	def new_hasher(cls, algorithm: str = 'sha1'):
 		return FileHasher(algorithm)
 
@@ -50,6 +63,7 @@ class FilesysTools(BaseTools):
 		Get a dictionary of some system and environment information.
 		Includes os_release, hostname, username, mem + disk, shell, etc.
 		"""
+		if extras is None: extras = {}
 		try:
 			import psutil
 			pdata = {
@@ -61,7 +75,6 @@ class FilesysTools(BaseTools):
 		except ImportError:
 			psutil, pdata = None, {}
 			logger.warning("Couldn't load psutil")
-		if extras is None: extras = {}
 		mains = {
 			'os_release': platform.platform(),
 			'hostname': socket.gethostname(),
@@ -71,7 +84,7 @@ class FilesysTools(BaseTools):
 			'environment_info_capture_datetime': datetime.now().isoformat(),
 			**psutil
 		}
-		return {k: str(v) for k, v in {**mains, **extras}.items()}
+		return {k: str(v) for k, v in {**mains, **pdata, **extras}.items()}
 
 	@classmethod
 	def delete_surefire(cls, path: PathLike) -> Optional[Exception]:
@@ -106,21 +119,6 @@ class FilesysTools(BaseTools):
 		logger.debug("Trashing {} to {} ...".format(path, trash_dir))
 		shutil.move(str(path), str(trash_dir))
 		logger.debug("Trashed {} to {}".format(path, trash_dir))
-
-	@classmethod
-	def updir(cls, n: int, *parts) -> Path:
-		"""
-		Get an absolute path `n` parents from `os.getcwd()`.
-		Ex: In dir '/home/john/dir_a/dir_b':
-			`updir(2, 'dir1', 'dir2')  # returns Path('/home/john/dir1/dir2')`
-		Does not sanitize.
-		"""
-		base = Path(os.getcwd())
-		for _ in range(n):
-			base = base.parent
-		for part in parts:
-			base = base / part
-		return base.resolve()
 
 	@classmethod
 	def try_cleanup(cls, path: Path) -> None:
@@ -202,12 +200,12 @@ class FilesysTools(BaseTools):
 
 	@classmethod
 	def save_json(cls, data, path: PathLike, mode: str = 'w') -> None:
-		with FilesysTools.open_file(path, mode) as f:
+		with cls.open_file(path, mode) as f:
 			json.dump(data, f, ensure_ascii=False, cls=JsonEncoder)
 
 	@classmethod
 	def load_json(cls, path: PathLike):
-		with FilesysTools.open_file(path, 'r') as f:
+		with cls.open_file(path, 'r') as f:
 			return json.load(f)
 
 	@classmethod
@@ -261,26 +259,23 @@ class FilesysTools(BaseTools):
 
 	@classmethod
 	def read_bytes(cls, path: PathLike) -> bytes:
-		with FilesysTools.open_file(path, 'rb') as f:
-			return f.read()
-
+		return Path(path).read_bytes()
 	@classmethod
 	def read_text(cls, path: PathLike) -> str:
-		with FilesysTools.open_file(path, 'r') as f:
-			return f.read()
+		return Path(path).read_text(encoding='utf-8')
 
 	@classmethod
 	def write_bytes(cls, data: Any, path: PathLike, mode: str = 'wb') -> None:
 		if not OpenMode(mode).write or not OpenMode(mode).binary:
-			raise BadCommandError("Cannot write bytes to {} in mode {}".format(path, mode))
-		with FilesysTools.open_file(path, mode) as f:
+			raise ContradictoryRequestError("Cannot write bytes to {} in mode {}".format(path, mode))
+		with cls.open_file(path, mode) as f:
 			f.write(data)
 
 	@classmethod
 	def write_text(cls, data: Any, path: PathLike, mode: str = 'w'):
 		if not OpenMode(mode).write or OpenMode(mode).binary:
-			raise BadCommandError("Cannot write text to {} in mode {}".format(path, mode))
-		with FilesysTools.open_file(path, mode) as f:
+			raise ContradictoryRequestError("Cannot write text to {} in mode {}".format(path, mode))
+		with cls.open_file(path, mode) as f:
 			f.write(str(data))
 
 	@classmethod
@@ -300,7 +295,7 @@ class FilesysTools(BaseTools):
 		if mode.write and mode.safe and path.exists():
 			raise FileDoesNotExistError("Path {} already exists".format(path))
 		if not mode.read:
-			PathTools.prep_file(path, overwrite=mode.overwrite, append=mode.append)
+			PathTools.prep_file(path, exist_ok = mode.overwrite or mode.append)
 		if mode.gzipped:
 			yield gzip.open(path, mode.internal, compresslevel=COMPRESS_LEVEL)
 		elif mode.binary:
@@ -322,11 +317,11 @@ class FilesysTools(BaseTools):
 		mode = OpenMode(mode)
 		if not mode.overwrite or mode.binary:
 			raise ContradictoryRequestError("Wrong mode for writing a text file: {}".format(mode))
-		if not FilesysTools.is_true_iterable(iterable):
+		if not cls.is_true_iterable(iterable):
 			raise TypeError("Not a true iterable")  # TODO include iterable if small
-		PathTools.prep_file(path, mode.overwrite, mode.append)
+		PathTools.prep_file(path, exist_ok = mode.overwrite or mode.append)
 		n = 0
-		with FilesysTools.open_file(path, mode) as f:
+		with cls.open_file(path, mode) as f:
 			for x in iterable:
 				f.write(str(x) + '\n')
 			n += 1
@@ -334,11 +329,11 @@ class FilesysTools(BaseTools):
 
 	@classmethod
 	def sha1(cls, x: SupportsBytes) -> str:
-		return FilesysTools.hash_hex(x, hashlib.sha1)
+		return cls.hash_hex(x, 'sha1')
 
 	@classmethod
 	def sha256(cls, x: SupportsBytes) -> str:
-		return FilesysTools.hash_hex(x, hashlib.sha256)
+		return cls.hash_hex(x, 'sha256')
 
 	@classmethod
 	def hash_hex(cls, x: SupportsBytes, algorithm: str) -> str:
@@ -350,14 +345,15 @@ class FilesysTools(BaseTools):
 		return m.hexdigest()
 
 	@classmethod
-	def replace_in_file(cls, path: str, changes: Mapping[str, str]) -> None:
+	def replace_in_file(cls, path: PathLike, changes: Mapping[str, str]) -> None:
 		"""
 		Uses re.sub repeatedly to modify (AND REPLACE) a file's content.
 		"""
-		with open(path) as f: data = f.read()
+		path = Path(path)
+		data = path.read_text(encoding='utf-8')
 		for key, value in changes.items():
 			data = re.sub(key, value, data, re.MULTILINE, re.DOTALL)
-		with open(path, 'w', encoding="utf8") as f: f.write(data)
+		path.write_text(data, encoding='utf-8')
 
 	@classmethod
 	def tmppath(cls, path: Optional[PathLike] = None, **kwargs) -> Generator[Path, None, None]:

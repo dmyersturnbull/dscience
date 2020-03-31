@@ -43,8 +43,6 @@ class Dep:
 		else:
 			return "\t- {}::{}{}".format(name, self.source, self.version)
 
-
-
 	def __lt__(self, other):
 		return (
 				(self.source, '' if self.component is None else self.component, self.name, self.version)
@@ -151,6 +149,7 @@ class DepList:
 			'\t}'
 		]
 
+
 class Deps(DepList):
 
 	@classmethod
@@ -169,5 +168,6 @@ class Deps(DepList):
 	def write_setup_file_partial(self, path: Path):
 		lines = '\n'.join(self.to_setup())
 		Path(path).write_text(lines, encoding='utf8')
+
 
 __all__ = ['Dep', 'DepList', 'Deps']

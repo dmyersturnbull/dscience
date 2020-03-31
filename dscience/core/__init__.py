@@ -9,7 +9,6 @@ import numpy as np
 from dscience.core.exceptions import ImmutableError
 # noinspection PyProtectedMember
 from dscience.core.internal import PathLike, look as _look
-from dscience.core.meta import *
 T = TypeVar('T', covariant=True)
 
 logger = logging.getLogger('dscience')
@@ -211,5 +210,4 @@ class OptRow:
 		# noinspection PyProtectedMember
 		return self._row == other._row
 
-__version__ = Dscience.version
-__all__ = ['JsonEncoder', 'SmartEnum', 'frozenlist', 'PathLike', 'OptRow', 'LazyWrap', 'Dscience']
+__all__ = ['JsonEncoder', 'SmartEnum', 'frozenlist', 'PathLike', 'OptRow', 'LazyWrap']
