@@ -13,11 +13,13 @@ from dataclasses import dataclass
 try:
 	from overrides import overrides
 except ImportError:
-	overrides = None
+	def overrides(c):
+		return c
 try:
 	from deprecated import deprecated
 except ImportError:
-	deprecated = None
+	def deprecated(c):
+		return c
 from dscience.core.exceptions import ImmatureWarning, DeprecatedWarning, ObsoleteWarning
 
 

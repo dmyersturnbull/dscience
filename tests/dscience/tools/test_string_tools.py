@@ -1,6 +1,5 @@
 import pytest
-from hypothesis import given
-from hypothesis import strategies
+from hypothesis import given, strategies
 from dscience.tools.string_tools import *
 from dscience.core.chars import *
 from dscience.core.mocks import *

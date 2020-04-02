@@ -108,7 +108,7 @@ class SmartEnum(enum.Enum):
 	def of(cls, v):
 		"""
 		Returns the member of this enum class from a string with the member's name, case-insentive and stripping whitespace.
-		Will return `v` if `v` is already an instance of this class.
+		Will return ``v`` if ``v`` is already an instance of this class.
 		"""
 		if isinstance(v, cls):
 			return v

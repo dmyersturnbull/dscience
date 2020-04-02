@@ -42,7 +42,7 @@ class PathTools(BaseTools):
 			return Path.home() / '.trash'
 
 	@classmethod
-	def prep_dir(cls, path: PathLike, exist_ok: bool) -> bool:
+	def prep_dir(cls, path: PathLike, exist_ok: bool = True) -> bool:
 		"""
 		Prepares a directory by making it if it doesn't exist.
 		If exist_ok is False, calls logger.warning it already exists
@@ -79,6 +79,16 @@ class PathTools(BaseTools):
 
 	@classmethod
 	def sanitize_path(cls, path: PathLike, is_file: Optional[bool] = None, show_warnings: bool = True) -> Path:
+		"""
+		Sanitizes a path for major OSes and filesystems.
+		Also see sanitize_path_nodes and sanitize_path_node.
+		Platform-dependent.
+		A corner case is drive letters in Linux: "C:\\Users\\john" is converted to '/C:/users/john' if os.name=='posix'
+		:param path:
+		:param is_file:
+		:param show_warnings:
+		:return:
+		"""
 		# the idea is to sanitize for both Windows and Posix, regardless of the platform in use
 		# the sanitization should be as uniform as possible for both platforms
 		# this works for at least Windows+NTFS
@@ -98,17 +108,21 @@ class PathTools(BaseTools):
 			is_file: Optional[bool] = None
 	) -> Path:
 		fixed_bits = [
-			bit+'/' if i==0 and bit.strip() in ['', '.', '..'] else
+			bit+os.sep if i==0 and bit.strip() in ['', '.', '..'] else
 			cls.sanitize_path_node(
 				bit,
 				is_file=(False if i<len(bits)-1 else is_file),
 				is_root_or_drive=(None if i==0 else False)
 			)
 			for i, bit in enumerate(bits)
-			if bit.strip() not in ['', '.'] or i==0  # ignore // just like Path does, but fail on ' '
+			if bit.strip() not in ['', '.'] or i==0  # ignore // (empty) just like Path does (but fail on sanitize_path_node(' '))
 		]
-		# keep ./ at the beginning for clarity; discard elsewhere
 		fixed_bits = [bit for i, bit in enumerate(fixed_bits) if i==0 or bit not in ['', '.']]
+		# unfortunately POSIX turns Path('C:\', '5') into C:\/5
+		# this isn't an ideal way to fix it, but it works
+		if os.name=='posix' and len(fixed_bits)>0 and re.compile(r'^([A-Z]:)(?:\\)?$').fullmatch(fixed_bits[0]):
+			fixed_bits[0] = fixed_bits[0].rstrip('\\')
+			fixed_bits.insert(0, '/')
 		return Path(*fixed_bits)
 
 	@classmethod
@@ -119,6 +133,21 @@ class PathTools(BaseTools):
 			is_root_or_drive: Optional[bool] = None,
 			include_fat: bool = False
 	) -> str:
+		"""
+		Sanitizes a path node such that it will be fine for major OSes and filesystems.
+		For example:
+		- 'plums;and/or;apples' becomes 'plums_and_or_apples' (escaped ; and /)
+		- 'null.txt' becomes '_null_.txt' ('null' is forbidden in Windows)
+		- 'abc  ' becomes 'abc' (no trailing spaces)
+		The behavior is platform-independent -- os, sys, and pathlib are not used.
+		For ex, calling sanitize_path_node(r'C:\') returns r'C:\' on both Windows and Linux
+		If you want to sanitize a whole path, see sanitize_path instead.
+		:param bit: The node
+		:param is_file: False for directories, True otherwise, None if unknown
+		:param is_root_or_drive: True if known to be the root ('/') or a drive ('C:\'), None if unknown
+		:param include_fat: Also make compatible with FAT filesystems
+		:return: A string
+		"""
 		# since is_file and is_root_or_drive are both Optional[bool], let's be explicit and use 'is' for clarity
 		if is_file is True and is_root_or_drive is True:
 			raise ContradictoryRequestError("is_file and is_root_or_drive are both true")
@@ -140,6 +169,11 @@ class PathTools(BaseTools):
 			# for bit=='C:' and is_root_or_drive=None, it could be either a drive letter or a file path that should be corrected to 'C_'
 			# I guess here we're going with a drive letter
 			if m is not None:
+				# we need C:\ and not C: because:
+				# Path('C:\\', '5').is_absolute() is True
+				# but Path('C:', '5').is_absolute() is False
+				# unfortunately, doing Path('C:\\', '5') on Linux gives 'C:\\/5'
+				# I can't handle that here, but sanitize_path() will account for it
 				return m.group(1)+'\\'
 			if is_root_or_drive is True:
 				raise IllegalPathError("Node '{}' is not the root or a drive letter".format(bit))

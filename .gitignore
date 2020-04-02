@@ -3,24 +3,15 @@
 ~*
 *~
 *#
-data/
-results/
-
-# Notebooks
-# Only allow notebooks, readmes, and example config/light data files
-# TODO doesn't work
-#notebooks/**/*
-!notebooks/**/*.ipynb
-!notebooks/**/*.md
-!notebooks/**/*.json
-!notebooks/**/*.toml
-!notebooks/**/*.txt
+Thumbs.db
 
 # Python
 __pycache__/
 *.py[cod]
 *$py.class
 *.so
+*.egg-info
+pip-wheel-metadata
 env/
 build/
 dist/
@@ -30,20 +21,9 @@ lib/
 lib64/
 parts/
 sdist/
-
-# Scala and Java
-dist/*
-target/
-*.class
-hs_err_pid*
-
-# Julia
-*.jl.cov
-*.jl.*.cov
-*.jl.mem
-deps/deps.jl
+docs/_build
 
 # Keep these:
 !/.gitignore
-!/.smt
+!/.travis.yml
 

@@ -1,5 +1,5 @@
 import pytest
-from functools import partial
+import os
 from dscience.core.exceptions import IllegalPathError
 from dscience.tools.path_tools import *
 raises = pytest.raises
@@ -25,27 +25,38 @@ class TestPathTools:
 		assert x('..', is_root_or_drive=False) == '..'
 
 	def test_sanitize_path_abs(self):
-		x = partial(PathTools.sanitize_path, show_warnings=False)
-		assert str(x('abc\\./22')).replace('\\', '/') == 'abc/22'
-		assert str(x('C:\\abc\\./22')).replace('\\', '/') == 'C:/abc/22'
-		assert str(x('/abc\\./22')).replace('\\', '/') == '/abc/22'
-		assert str(x('./abc\\./22')).replace('\\', '/') == 'abc/22'
-		assert str(x('C:\\abc\\\\22')) == 'C:\\abc\\22'
+		def z(s, **kwargs):
+			return str(PathTools.sanitize_path(s, **kwargs, show_warnings=False))
+		# weird case. drive letters in Linux
+		if os.name=='posix':
+			assert z(r'C:\abc\22') == r'/C:/abc/22'
+			assert z(r'C:\abc\\22') == r'/C:/abc/22'
+			assert z('C:\\abc\\./22') == r'/C:/abc/22'
+		elif os.name=='nt':
+			assert z(r'C:\abc\22') == r'C:\abc\22'
+			assert z(r'C:\abc\\22') == r'C:\abc\22'
+			assert z('C:\\abc\\./22') == r'C:\abc\22'
+		else:
+			assert False, "OS {} is not supported"
 
 	def test_sanitize_path(self):
-		x = partial(PathTools.sanitize_path, show_warnings=False)
-		assert str(x('abc|xyz', False)) == 'abc_xyz'
-		assert str(x('abc\\xyz.', False)) == 'abc\\xyz'
-		assert str(x('..\\5')) == '..\\5'
-		assert str(x('xyz...', False)) == 'xyz'
-		assert str(x('abc\\.\\xyz\\n.', False)) == 'abc\\xyz\\n'
+		def x(s, **kwargs):
+			return str(PathTools.sanitize_path(s, **kwargs, show_warnings=False)).replace('\\', '/')
+		assert x('abc\\./22') == 'abc/22'
+		assert x('/abc\\./22') == '/abc/22'
+		assert x('./abc\\./22') == 'abc/22'
+		assert str(x('abc|xyz', is_file=False)) == 'abc_xyz'
+		assert str(x('abc\\xyz.', is_file=False)) == 'abc/xyz'
+		assert str(x('..\\5')) == '../5'
+		assert str(x('xyz...', is_file=False)) == 'xyz'
+		assert str(x('abc\\.\\xyz\\n.', is_file=False)) == 'abc/xyz/n'
 		with raises(IllegalPathError):
 			x('x' * 255)
 		assert str(x('NUL')) == '_NUL_'
 		assert str(x('nul')) == '_nul_'
 		assert str(x('nul.txt')) == '_nul_.txt'
-		assert str(x('abc\\NUL')) == 'abc\\_NUL_'
-		assert str(x('NUL\\abc')) == '_NUL_\\abc'
+		assert str(x('abc\\NUL')) == 'abc/_NUL_'
+		assert str(x('NUL\\abc')) == '_NUL_/abc'
 
 
 if __name__ == '__main__':
