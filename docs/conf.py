@@ -23,5 +23,5 @@ release = X.release
 language = "en"
 
 # -- General configuration ---------------------------------------------------
-exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
+exclude_patterns = ['_build', 'Thumbs.db', '.*', '~*', '*~', '*#']
 html_theme = 'alabaster'

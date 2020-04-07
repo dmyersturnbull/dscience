@@ -3,6 +3,6 @@ python:
   - "3.7"
   - "3.8"
 install:
-  - pip install .[extra,db,numeric,jupyter,test,biochem]
+  - pip install .[all]
 script:
   - pytest
