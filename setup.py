@@ -1,9 +1,15 @@
 #!/usr/bin/env python3
 # coding=utf-8
 
+import shutil
 from pathlib import Path
-from setuptools import setup
+from setuptools import setup, find_packages
 from dscience import ProjectInfo as X
+
+# copy the readme
+readme_path = Path(X.name, 'resources', X.readme_filename)
+shutil.copy(X.readme_filename, str(readme_path))
+print(readme_path)
 
 # generated from requirements.txt using Deps.write_setup_file_partial()
 install_requires=[
@@ -49,14 +55,14 @@ setup(
 	version=X.version,
 	download_url = X.download_url,
 	description=X.description,
-	long_description=X.readme,
-	long_description_content_type='text/markdown',
+	long_description=readme_path.read_text(encoding='utf8'),
+	long_description_content_type=X.readme_format,
 	author=X.author,
 	license=X.license,
 	maintainer=X.maintainer,
 	url=X.url,
 	project_urls=X.project_urls,
-	packages=X.packages,
+	packages=find_packages(),
 	test_suite='tests',
 	python_requires='>={},<={}'.format(X.min_py_version, X.max_py_version),
 	install_requires=install_requires,

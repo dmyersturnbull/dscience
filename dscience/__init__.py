@@ -2,8 +2,6 @@ from setuptools import find_packages
 from datetime import date
 from pathlib import Path
 
-root = Path(__file__).parent.parent.absolute()
-
 class ProjectInfo:
 	"""Information needed by setup.py and/or docs/conf.py."""
 	# ------------ bump these -------------
@@ -17,9 +15,9 @@ class ProjectInfo:
 	project_start_date = date(2020, 3, 28)
 	first_release_date = date(2020, 4, 2)
 	version = release.split('-')[0] if '-' in release else release
-	packages = find_packages(str(root))
 	description = 'A collection of Python snippets for the Kokel Lab'
-	readme = Path(root / 'README.md').read_text(encoding='utf8')
+	readme_filename = 'README.md'
+	readme_format = 'text/markdown'
 	author = "Douglas Myers-Turnbull"
 	copyright = "Copyright {}–{}, Douglas Myers-Turnbull & UCSF".format(copyright_start_date.year, current_release_date.year)
 	credits = ["Douglas Myers-Turnbull", "Chris Ki", "Cole Helsell", "the Kokel Lab @ UCSF", "the Keiser Lab @ UCSF", "UCSF"]

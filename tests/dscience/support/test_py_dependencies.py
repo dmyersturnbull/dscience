@@ -1,6 +1,6 @@
 import pytest
 from pathlib import Path
-from dscience.support.py_dependencies import *
+from tyrannosaurus.services import *
 
 class TestPyDependencies:
 	# TODO
