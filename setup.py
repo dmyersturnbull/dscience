@@ -17,6 +17,7 @@ install_requires=[
 	'jsonpickle    >=1.3,<2.0',
 	'natsort       >=7.0,<8.0',
 	'numpy         >=1.18,<2.0',
+	'pytables      >=3.6,<4.0',
 	'pandas        >=1.0,<2.0',
 	'requests      >=2.23,<3.0'
 ]
@@ -64,7 +65,7 @@ setup(
 	project_urls=X.project_urls,
 	packages=find_packages(),
 	test_suite='tests',
-	python_requires='>={},<={}'.format(X.min_py_version, X.max_py_version),
+	python_requires='>={}'.format(X.min_py_version),
 	install_requires=install_requires,
 	extras_require=extras_require,
 	zip_safe=False,

@@ -102,6 +102,8 @@ class XWarning(UserWarning):
 
 class Error(XException):                         """Abstract exception could reasonably be recovered from. Subclass names should end with 'Error'."""
 class NaturalExpectedError(Error):               """Non-specific exception to short-circuit behavior but meaning 'all ok'."""
+ErrorUtils.args(name=str)
+class CodeIncompleteError(Error, NotImplementedError): """The code is not finished!"""
 
 class _CodeWarning(XWarning):                    """A warning related to code quality."""
 class ObsoleteWarning(_CodeWarning, _PDW):       """The code being called is obsolete and/or may be deprecated in the future."""

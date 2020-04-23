@@ -20,7 +20,7 @@ try:
 except ImportError:
 	def deprecated(c):
 		return c
-from dscience.core.exceptions import ImmatureWarning, DeprecatedWarning, ObsoleteWarning
+from dscience.core.exceptions import ImmatureWarning, DeprecatedWarning, ObsoleteWarning, CodeIncompleteError
 
 
 class SpecialStr(str):
@@ -452,6 +452,7 @@ def auto_timeout(seconds: int):
 
 @enum.unique
 class CodeStatus(enum.Enum):
+	Incomplete = 0
 	Immature = 1
 	Preview = 2
 	Stable = 3
@@ -467,6 +468,10 @@ def status(level: CodeStatus):
 		func.__status__ = level
 		if level in [CodeStatus.Preview, CodeStatus.Stable]:
 			return func
+		elif level == CodeStatus.Incomplete:
+			def my_fn(*args, **kwargs):
+				raise CodeIncompleteError(str(func.__name__) + " is incomplete!", name=str(func.__name__))
+			return wraps(func)(my_fn)
 		elif level == CodeStatus.Immature:
 			def my_fn(*args, **kwargs):
 				warn(str(func.__name__) + " is immature", ImmatureWarning)
