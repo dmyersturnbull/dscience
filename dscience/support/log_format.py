@@ -20,17 +20,28 @@ class LogFormatBuilder:
 	def __repr__(self) -> str: return "{}({})".format(self.__class__.__name__, self._s)
 	def __str__(self) -> str: return repr(self)
 
-	def level_num(self, left: str = ' ', right: str = ''): self._s += left + '%(levelno)s' + right; return self
-	def level_name(self, left: str = ' ', right: str = ''): self._s += left + '%(levelname)s' + right; return self
-	def level_name_fixed_width(self, left: str = ' ', right: str = ''): self._s += left + '%(levelname)-8s' + right; return self
-	def name(self, left: str = ' ', right: str = ''): self._s += left + '%(name)s' + right; return self
-	def module(self, left: str = ' ', right: str = ''): self._s += left + '%(module)s' + right; return self
-	def message(self, left: str = ' ', right: str = ''): self._s += left + '%(message)s' + right; return self
-	def thread_id(self, left: str = ' ', right: str = ''): self._s += left + '%(thread)d' + right; return self
-	def thread_name(self, left: str = ' ', right: str = ''): self._s += left + '%(threadName)s' + right; return self
-	def asc_time(self, left: str = ' ', right: str = ''): self._s += left + '%(asctime)s' + right; return self
-	def line_num(self, left: str = ' ', right: str = ''): self._s += left + '%(lineno)d' + right; return self
-	def other(self, fmt: str, left: str = ' ', right: str = ''): self._s += left + fmt + right; return self
+	def level_num(self, left: str = ' ', right: str = ''):
+		self._s += left + '%(levelno)s' + right; return self
+	def level_name(self, left: str = ' ', right: str = ''):
+		self._s += left + '%(levelname)s' + right; return self
+	def level_name_fixed_width(self, left: str = ' ', right: str = ''):
+		self._s += left + '%(levelname)-8s' + right; return self
+	def name(self, left: str = ' ', right: str = ''):
+		self._s += left + '%(name)s' + right; return self
+	def module(self, left: str = ' ', right: str = ''):
+		self._s += left + '%(module)s' + right; return self
+	def message(self, left: str = ' ', right: str = ''):
+		self._s += left + '%(message)s' + right; return self
+	def thread_id(self, left: str = ' ', right: str = ''):
+		self._s += left + '%(thread)d' + right; return self
+	def thread_name(self, left: str = ' ', right: str = ''):
+		self._s += left + '%(threadName)s' + right; return self
+	def asc_time(self, left: str = ' ', right: str = ''):
+		self._s += left + '%(asctime)s' + right; return self
+	def line_num(self, left: str = ' ', right: str = ''):
+		self._s += left + '%(lineno)d' + right; return self
+	def other(self, fmt: str, left: str = ' ', right: str = ''):
+		self._s += left + fmt + right; return self
 
 	def build(self) -> logging.Formatter:
 		return logging.Formatter(self._s[min(1, len(self._s)):])
@@ -72,7 +83,11 @@ class PrettyRecordFactory:
 		def ltrunc(s, n, before='', after=''):
 			return (before + (s if len(s) <= n else s[:n - 1] + '…') + after).ljust(n + len(before) + len(after))
 		record = self.old_factory(*args, **kwargs)
-		record.abbrev = ltrunc(record.name, self.max_name, after='⟩') + ' ' + ltrunc(record.module, self.max_module) + ' ' + ':' + str(record.lineno).ljust(self.max_line)
+		record.abbrev = (
+				ltrunc(record.name, self.max_name, after='⟩')
+				+ ' ' + ltrunc(record.module, self.max_module)
+				+ ' ' + ':' + str(record.lineno).ljust(self.max_line)
+		)
 		return record
 
 	@property

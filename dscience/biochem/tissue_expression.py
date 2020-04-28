@@ -19,11 +19,17 @@ class TissueTable(SimpleFrame):
 	DEFAULT_PATH = 'normal_tissue.tsv.gz'
 
 	@classmethod
-	def load(cls, path: Optional[PathLike] = None, filter_fn: Callable[[pd.DataFrame], pd.DataFrame]=pd.DataFrame.dropna) -> TissueTable:
+	def load(
+			cls,
+			path: Optional[PathLike] = None,
+			filter_fn: Callable[[pd.DataFrame], pd.DataFrame] = pd.DataFrame.dropna
+	) -> TissueTable:
 		"""
-		Get a DataFrame of Human Protein Atlas tissue expression data, indexed by Gene name and with the 'Gene' and 'Reliability' columns dropped.
+		Get a DataFrame of Human Protein Atlas tissue expression data,
+		indexed by Gene name and with the 'Gene' and 'Reliability' columns dropped.
 		The expression level ('Level') is replaced using this map: {'Not detected': 0, 'Low': 1, 'Medium': 2, 'High': 3}.
-		Downloads the file from http://www.proteinatlas.org/download/normal_tissue.tsv.zip and reloads from normal_tissue.tsv.gz thereafter.
+		Downloads the file from http://www.proteinatlas.org/download/normal_tissue.tsv.zip
+		and reloads from normal_tissue.tsv.gz thereafter.
 		"""
 		if path is None: path = TissueTable.DEFAULT_PATH
 		resource = WebResource(TissueTable.URL, TissueTable.MEMBER_NAME, path)

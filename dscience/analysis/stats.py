@@ -9,7 +9,12 @@ from dscience.core.exceptions import LengthMismatchError, NullValueError
 class StatTools:
 
 	@classmethod
-	def kde(cls, a: np.array, kernel: str = 'gau', bw: str = 'normal_reference') -> Tup[np.array, np.array]:
+	def kde(
+			cls,
+			a: np.array,
+			kernel: str = 'gau',
+			bw: str = 'normal_reference'
+	) -> Tup[np.array, np.array]:
 		"""
 		Calculates univariate KDE with statsmodel.
 		(This function turned into a thin wrapper around statsmodel.)
@@ -26,11 +31,20 @@ class StatTools:
 		"""Calculates a p-value from a t-test between labels a and b."""
 		s = pd.DataFrame(z)
 		neg = s[s.index.get_level_values('name') == a].values
-		if len(neg) < 2: raise LengthMismatchError("Too few ({}) values for {}".format(len(neg), a), minimum=2)
+		if len(neg) < 2:
+			raise LengthMismatchError(
+				"Too few ({}) values for {}".format(len(neg), a),
+				minimum=2
+			)
 		pos = s[s.index.get_level_values('name') == b].values
-		if len(pos) < 2: raise LengthMismatchError("Too few ({}) values for {}".format(len(pos), b), minimum=2)
+		if len(pos) < 2:
+			raise LengthMismatchError(
+				"Too few ({}) values for {}".format(len(pos), b),
+				minimum=2
+			)
 		pval = scipy.stats.ttest_ind(pos, neg, equal_var=False).pvalue
-		if isinstance(pval, float) and np.isnan(pval): raise NullValueError("NaN for {} and {}".format(a, b))
+		if isinstance(pval, float) and np.isnan(pval):
+			raise NullValueError("NaN for {} and {}".format(a, b))
 		else: return pval[0]
 
 

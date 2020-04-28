@@ -90,32 +90,17 @@ class ClassifierPath:
 	def confusion_csv(self) -> Path:
 		return self / 'confusion.csv'
 	@property
-	def confusion_png(self) -> Path:
-		return self / 'confusion.png'
-	@property
 	def confusion_pdf(self) -> Path:
 		return self / 'confusion.pdf'
-	@property
-	def swarm_png(self) -> Path:
-		return self / 'swarm.png'
 	@property
 	def swarm_pdf(self) -> Path:
 		return self / 'swarm.pdf'
 	@property
-	def bar_png(self) -> Path:
-		return self / 'bar.png'
-	@property
 	def bar_pdf(self) -> Path:
 		return self / 'bar.pdf'
 	@property
-	def boxplot_png(self) -> Path:
-		return self / 'boxplot.png'
-	@property
 	def boxplot_pdf(self) -> Path:
 		return self / 'boxplot.pdf'
-	@property
-	def violin_png(self) -> Path:
-		return self / 'violin.png'
 	@property
 	def violin_pdf(self) -> Path:
 		return self / 'violin.pdf'

@@ -184,9 +184,15 @@ class FilesysTools(BaseTools):
 					+ '\n'
 				)
 			if 0 < len(bads) <= 10:
-				logger.warning("At least one properties entry contains an equals sign or newline (\\n). These were escaped: {}".format(', '.join(bads)))
+				logger.warning(
+					"At least one properties entry contains an equals sign or newline (\\n)."
+					"These were escaped: {}".format(', '.join(bads))
+				)
 			elif len(bads) > 0:
-				logger.warning("At least one properties entry contains an equals sign or newline (\\n), which were escaped.")
+				logger.warning(
+					"At least one properties entry contains an equals sign or newline (\\n),"
+					"which were escaped."
+				)
 
 	@classmethod
 	def make_dirs(cls, s: PathLike) -> None:
@@ -221,7 +227,16 @@ class FilesysTools(BaseTools):
 		return jsonpickle.decode(FilesysTools.read_text(path))
 
 	@classmethod
-	def read_any(cls, path: PathLike) -> Union[str, bytes, Sequence[str], pd.DataFrame, Sequence[int], Sequence[float], Sequence[str], Mapping[str, str]]:
+	def read_any(cls, path: PathLike) -> Union[
+			str,
+			bytes,
+			Sequence[str],
+			pd.DataFrame,
+			Sequence[int],
+			Sequence[float],
+			Sequence[str],
+			Mapping[str, str]
+	]:
 		"""
 		Reads a variety of simple formats based on filename extension, including '.txt', 'csv', .xml', '.properties', '.json'.
 		Also reads '.data' (binary), '.lines' (text lines).
@@ -232,7 +247,14 @@ class FilesysTools(BaseTools):
 		path = Path(path)
 		ext = path.suffix.lstrip('.')
 		def load_list(dtype):
-			return [dtype(s) for s in FilesysTools.read_lines_file(path)[0].replace(' ', '').replace('[', '').replace(']', '').split(',')]
+			return [
+				dtype(s)
+				for s in FilesysTools.read_lines_file(path)[0]
+				.replace(' ', '')
+				.replace('[', '')
+				.replace(']', '')
+				.split(',')
+			]
 		if ext == 'lines':
 			return FilesysTools.read_lines_file(path)
 		elif ext == 'txt':
@@ -369,7 +391,12 @@ class FilesysTools(BaseTools):
 			Path(path).unlink()
 
 	@classmethod
-	def tmpfile(cls, path: Optional[PathLike] = None, spooled: bool = False, **kwargs) -> Generator[Writeable, None, None]:
+	def tmpfile(
+			cls,
+			path: Optional[PathLike] = None,
+			spooled: bool = False,
+			**kwargs
+	) -> Generator[Writeable, None, None]:
 		"""
 		Simple wrapper around tempfile.TemporaryFile, tempfile.NamedTemporaryFile, and tempfile.SpooledTemporaryFile.
 		:param path:

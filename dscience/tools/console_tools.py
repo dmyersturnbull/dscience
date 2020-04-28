@@ -25,7 +25,13 @@ class ConsoleTools(BaseTools):
 				writer("Enter 'yes' or 'no'.\n")
 
 	@classmethod
-	def slow_delete(cls, path: str, wait: int = 5, delete_fn: Callable[[str], None] = FilesysTools.delete_surefire, writer: Callable[[str], None] = sys.stdout.write):
+	def slow_delete(
+			cls,
+			path: str,
+			wait: int = 5,
+			delete_fn: Callable[[str], None] = FilesysTools.delete_surefire,
+			writer: Callable[[str], None] = sys.stdout.write)\
+			:
 		logger.debug("Deleting directory tree {} ...".format(path))
 		writer("Waiting for {}s before deleting {}: ".format(wait, path))
 		for i in range(0, wait):
@@ -38,9 +44,14 @@ class ConsoleTools(BaseTools):
 		logger.debug("Deleted directory tree {}".format(path))
 
 	@classmethod
-	def confirm(cls, msg: Union[None, str, Callable[[], None]] = None, input_fn: Callable[[str], str] = input, writer: Callable[[str], None] = sys.stdout.write) -> bool:
+	def confirm(
+			cls,
+			msg: Union[None, str, Callable[[], None]] = None,
+			input_fn: Callable[[str], str] = input,
+			writer: Callable[[str], None] = sys.stdout.write
+	) -> bool:
 		"""
-		Asks for a confirmation from the user using the bulliten input().
+		Asks for a confirmation from the user using the bulletin input().
 		:param msg: If None defaults to 'Confirm? [yes/no]'
 		:param input_fn: Function to get the user input (its argument is always '')
 		:param writer: Print using this function (should not print a newline by default)

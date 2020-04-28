@@ -1,4 +1,4 @@
-from typing import Iterable, Callable, Optional
+from typing import Iterable, Callable, Optional, Mapping
 import logging
 import enum
 from pathlib import Path
@@ -22,7 +22,12 @@ class ColorMessages:
 			MsgLevel.FAILURE: Fore.RED
 		}
 
-	def __init__(self, color_map: Optional[Mapping[MsgLevel, int]] = None, log_fn: Optional[Callable[[str], None]] = None, **kwargs):
+	def __init__(
+			self,
+			color_map: Optional[Mapping[MsgLevel, int]] = None,
+			log_fn: Optional[Callable[[str], None]] = None,
+			**kwargs
+	):
 		"""
 		Constructs a new environment for colored console messages.
 		:param color_map: A map from level to colors in colorama to override ColorMessages.DEFAULT_COLOR_MAP
@@ -45,7 +50,15 @@ class ColorMessages:
 	def thick(self, level: MsgLevel, *lines: str):
 		self._print(['\n', lines, '\n'], self._color_map[level], **self._kwargs)
 
-	def _print(self, lines: Iterable[str], color: int, top: str = '_', bottom: str = '_', sides: str = '', line_length: int = 100):
+	def _print(
+			self,
+			lines: Iterable[str],
+			color: int,
+			top: str = '_',
+			bottom: str = '_',
+			sides: str = '',
+			line_length: int = 100
+	):
 		def cl(text: str): print(str(color) + sides + text.center(line_length - 2 * len(sides)) + sides)
 		print(str(color) + top * line_length)
 		self._log(top * line_length)

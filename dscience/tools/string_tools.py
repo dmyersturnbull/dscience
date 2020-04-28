@@ -19,7 +19,13 @@ class StringTools(BaseTools):
 		Returns a pretty-printed dict, complete with indentation. Will fail on non-JSON-serializable datatypes.
 		"""
 		#return Pretty.condensed(dct)
-		return cls.retab(json.dumps(dct, default=JsonEncoder().default, sort_keys=True, indent=1, ensure_ascii=False), 1)
+		return cls.retab(json.dumps(
+			dct,
+			default=JsonEncoder().default,
+			sort_keys=True,
+			indent=1,
+			ensure_ascii=False
+		), 1)
 
 	@classmethod
 	def retab(cls, s: str, nspaces: int) -> str:
@@ -49,7 +55,8 @@ class StringTools(BaseTools):
 	@classmethod
 	def truncate(cls, s: Optional[str], n: int, always_dots: bool = False) -> Optional[str]:
 		"""
-		Returns a string if it has `n` or fewer characters; otherwise truncates to length `n-1` and appends `…` (UTF character).
+		Returns a string if it has `n` or fewer characters;
+		otherwise truncates to length `n-1` and appends `…` (UTF character).
 		If `s` is None and `always_dots` is True, returns `n` copies of `.` (as a string).
 		If `s` is None otherwise, returns None.
 		:param s: The string
@@ -144,7 +151,12 @@ class StringTools(BaseTools):
 		return StringTools.strip_off_start(StringTools.strip_off_end(s, suffix), prefix)
 
 	@classmethod
-	def strip_any_ends(cls, s: str, prefixes: Union[str, Sequence[str]], suffixes: Union[str, Sequence[str]]) -> str:
+	def strip_any_ends(
+			cls,
+			s: str,
+			prefixes: Union[str, Sequence[str]],
+			suffixes: Union[str, Sequence[str]]
+	) -> str:
 		"""
 		Flexible variant that strips any number of prefixes and any number of suffixes.
 		Also less type-safe than more specific variants.
@@ -170,7 +182,8 @@ class StringTools(BaseTools):
 		pieces = [
 				('(', ')'), ('[', ']'), ('[', ']'), ('{', '}'), ('<', '>'),
 				(Chars.lshell, Chars.rshell), (Chars.langle, Chars.rangle),
-				(Chars.ldparen, Chars.rdparen), (Chars.ldbracket, Chars.rdbracket), (Chars.ldangle, Chars.rdangle), (Chars.ldshell, Chars.rdshell)
+				(Chars.ldparen, Chars.rdparen), (Chars.ldbracket, Chars.rdbracket),
+				(Chars.ldangle, Chars.rdangle), (Chars.ldshell, Chars.rdshell)
 			]
 		return StringTools.strip_paired(text, pieces)
 
@@ -197,7 +210,8 @@ class StringTools(BaseTools):
 				(Chars.lshell, Chars.rshell), (Chars.langle, Chars.rangle),
 				('`', '`'),
 				(Chars.lsq, Chars.rsq), (Chars.ldq, Chars.rdq), ("'", "'"), ('"', '"'),
-				(Chars.ldparen, Chars.rdparen), (Chars.ldbracket, Chars.rdbracket), (Chars.ldangle, Chars.rdangle), (Chars.ldshell, Chars.rdshell)
+				(Chars.ldparen, Chars.rdparen), (Chars.ldbracket, Chars.rdbracket),
+				(Chars.ldangle, Chars.rdangle), (Chars.ldshell, Chars.rdshell)
 			]
 		return StringTools.strip_paired(text, pieces)
 
@@ -211,7 +225,10 @@ class StringTools(BaseTools):
 		```
 		"""
 		if any([a for a in pieces if len(a) != 2]):
-			raise ValueError("strip_paired requires each item in `pieces` be a string of length 2: (stard, end); got {}".format(pieces))
+			raise ValueError(
+				"strip_paired requires each item in `pieces` be a string of length 2: (stard, end);"
+				"got {}".format(pieces)
+			)
 		text = str(text)
 		while len(text) > 0:
 			yes = False
@@ -267,7 +284,10 @@ class StringTools(BaseTools):
 		smallem = '﹘'
 		smallhm = '﹣'
 		fullhm = '－'
-		for c in [Chars.em, Chars.en, Chars.fig, Chars.minus, Chars.hyphen, Chars.nbhyphen, smallem, smallhm, fullhm]:
+		for c in [
+			Chars.em, Chars.en, Chars.fig, Chars.minus, Chars.hyphen, Chars.nbhyphen,
+			smallem, smallhm, fullhm
+		]:
 			s = str(s).replace(c, '-')
 		return s
 
@@ -286,7 +306,11 @@ class StringTools(BaseTools):
 		"""
 		# TODO this seems absurdly long for what it does
 		if n_sigfigs is None or n_sigfigs < 1:
-			raise OutOfRangeError('Sigfigs of {} is nonpositive'.format(n_sigfigs), value=n_sigfigs, minimum=1)
+			raise OutOfRangeError(
+				'Sigfigs of {} is nonpositive'.format(n_sigfigs),
+				value=n_sigfigs,
+				minimum=1
+			)
 		# first, handle NaN and infinities
 		if np.isneginf(v):
 			return Chars.minus + Chars.inf
@@ -336,7 +360,7 @@ class StringTools(BaseTools):
 			return Chars.null
 		n_args = str(function.__code__.co_argcount) if hasattr(function, '__code__') else '?'
 		boundmatch = re.compile(r'^<bound method [^ .]+\.([^ ]+) of (.+)>$').fullmatch(str(function))
-		objmatch = re.compile(r"<([A-Za-z0-9_.<>]+)[ ']*object").search(str(function))        # instance of global or local class
+		objmatch = re.compile(r"<([A-Za-z0-9_.<>]+)[ ']*object").search(str(function))  # instance of global or local class
 		addr = ' @ ' + hex(id(function)) if with_address else ''
 		if cls.is_lambda(function):
 			# simplify lambda functions!
@@ -406,7 +430,14 @@ class StringTools(BaseTools):
 		return s
 
 	@classmethod
-	def join(cls, seq: Iterable[T], sep: str = '\t', attr: Optional[str] = None, prefix: str = '', suffix: str = '') -> str:
+	def join(
+			cls,
+			seq: Iterable[T],
+			sep: str = '\t',
+			attr: Optional[str] = None,
+			prefix: str = '',
+			suffix: str = ''
+	) -> str:
 		"""
 		Join elements into a str more easily than ''.join. Just simplifies potentially long expressions.
 		Won't break with ValueError if the elements aren't strs.
@@ -427,7 +458,14 @@ class StringTools(BaseTools):
 			return sep.join([prefix + str(getattr(s, attr)) + suffix for s in seq])
 
 	@classmethod
-	def join_kv(cls, seq: Mapping[T, V], sep: str = '\t', eq: str = '=', prefix: str = '', suffix: str = '') -> str:
+	def join_kv(
+			cls,
+			seq: Mapping[T, V],
+			sep: str = '\t',
+			eq: str = '=',
+			prefix: str = '',
+			suffix: str = ''
+	) -> str:
 		"""
 		Joins dict elements into a str like 'a=1, b=2, c=3`.
 		Won't break with ValueError if the keys or values aren't strs.

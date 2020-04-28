@@ -10,8 +10,12 @@ logger = logging.getLogger('dscience')
 class MagicTemplate:
 
 	@classmethod
-	def from_path(cls, path: PathLike, encoding: str = 'utf8', prefix: str = '${{', suffix: str = '}}') -> MagicTemplate:
-		return MagicTemplate(lambda: Path(path).read_text(encoding=encoding), prefix=prefix, suffix=suffix)
+	def from_path(
+			cls,
+			path: PathLike,
+			prefix: str = '${{', suffix: str = '}}'
+	) -> MagicTemplate:
+		return MagicTemplate(lambda: Path(path).read_text(encoding='utf8'), prefix=prefix, suffix=suffix)
 
 	@classmethod
 	def from_text(cls, text: str, prefix: str = '${{', suffix: str = '}}') -> MagicTemplate:

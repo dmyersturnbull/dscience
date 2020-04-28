@@ -39,7 +39,14 @@ class ProgramTools(BaseTools):
 		:return: A `GitDescription` instance, with fields text, tag, commits, hash, is_dirty, and is_broken
 		:raises: CalledProcessError
 		"""
-		x = subprocess.run('git describe --long --dirty --broken --abbrev=40 --tags'.split(' '), cwd=str(git_repo_dir), capture_output=True, check=True, text=True, encoding='utf8')
+		x = subprocess.run(
+			'git describe --long --dirty --broken --abbrev=40 --tags'.split(' '),
+			cwd=str(git_repo_dir),
+			capture_output=True,
+			check=True,
+			text=True,
+			encoding='utf8'
+		)
 		return cls._parse(x.stdout.strip())
 
 	@classmethod
@@ -49,7 +56,14 @@ class ProgramTools(BaseTools):
 		m = pat.fullmatch(text)
 		if m is None: raise ParsingError("Bad git describe string {}".format(text))
 		# noinspection PyArgumentList
-		return GitDescription(text, m.group(1), int(m.group(2)), m.group(3), m.group(4)=='dirty', m.group(4)=='broken')
+		return GitDescription(
+			text,
+			m.group(1),
+			int(m.group(2)),
+			m.group(3),
+			m.group(4)=='dirty',
+			m.group(4)=='broken'
+		)
 
 
 __all__ = ['GitDescription', 'ProgramTools']

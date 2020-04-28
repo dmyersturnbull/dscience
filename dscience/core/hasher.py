@@ -11,7 +11,12 @@ class FileHasher:
 	Makes and reads .sha1 / .sha256 files next to existing paths.
 	"""
 
-	def __init__(self, algorithm: Union[str, Callable[[], Any]] = 'sha1', extension: Optional[str] = None, buffer_size: int = 16*1024):
+	def __init__(
+			self,
+			algorithm: Union[str, Callable[[], Any]] = 'sha1',
+			extension: Optional[str] = None,
+			buffer_size: int = 16*1024
+	):
 		if isinstance(hashlib, str):
 			self.algorithm, self.extension = getattr(hashlib, algorithm), '.'+extension
 		elif callable(algorithm) and extension is None:
@@ -52,7 +57,10 @@ class FileHasher:
 		with open(file_name + self.extension, 'r', encoding="utf8") as f:
 			exp, act = f.read(), self.hashsum(file_name)
 			if exp != act:
-				raise HashValidationFailedError("Hash for file {} does not match".format(file_name), key=file_name, expected=exp, actual=act)
+				raise HashValidationFailedError(
+					"Hash for file {} does not match".format(file_name),
+					key=file_name, expected=exp, actual=act
+				)
 		return opener(file_name, *args)
 
 

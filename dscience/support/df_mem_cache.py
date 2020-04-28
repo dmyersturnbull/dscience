@@ -38,7 +38,11 @@ class MemCachePolicy(Generic[K]):
 
 class MemoryLimitingPolicy(MemCachePolicy, Generic[K], ABC):
 
-	def __init__(self, max_memory_bytes: Optional[int] = None, max_fraction_available_bytes: Optional[float] = None):
+	def __init__(
+			self,
+			max_memory_bytes: Optional[int] = None,
+			max_fraction_available_bytes: Optional[float] = None
+	):
 		self._max_memory_bytes = max_memory_bytes
 		self._max_fraction_available_bytes = max_fraction_available_bytes
 		self._total_memory_bytes = 0
@@ -51,8 +55,13 @@ class MemoryLimitingPolicy(MemCachePolicy, Generic[K], ABC):
 
 	def should_archive(self) -> bool:
 		return (
-			self._max_memory_bytes is not None and self._total_memory_bytes > self._max_memory_bytes
-			or self._max_fraction_available_bytes is not None and self._total_memory_bytes > virtual_memory().available * self._max_fraction_available_bytes
+			(
+				self._max_memory_bytes is not None
+				and self._total_memory_bytes > self._max_memory_bytes
+			) or (
+				self._max_fraction_available_bytes is not None
+				and self._total_memory_bytes > virtual_memory().available * self._max_fraction_available_bytes
+			)
 		)
 
 	def reindex(self, items: Dict[K, pd.DataFrame]) -> None:
@@ -87,8 +96,14 @@ class MemoryLimitingPolicy(MemCachePolicy, Generic[K], ABC):
 			nicesize(self._total_memory_bytes),
 			'-' if self._max_memory_bytes is None else nicesize(self._max_memory_bytes),
 			nicesize(self._total_memory_bytes),
-			'-' if self._max_fraction_available_bytes is None else nicesize(available * self._max_fraction_available_bytes),
-			'-' if self._max_fraction_available_bytes is None else np.round(100 * self._total_memory_bytes / (available * self._max_fraction_available_bytes), 3)
+			(
+				'-' if self._max_fraction_available_bytes is None
+				else nicesize(available * self._max_fraction_available_bytes)
+			),
+			(
+				'-' if self._max_fraction_available_bytes is None
+				else np.round(100 * self._total_memory_bytes / (available * self._max_fraction_available_bytes), 3)
+			)
 		)
 
 	def __repr__(self):
@@ -101,7 +116,11 @@ class MemoryLimitingPolicy(MemCachePolicy, Generic[K], ABC):
 				if current_day is None or current_day.date() != dt.date():
 					current_day = dt
 					ss.append('#' + current_day.strftime('%Y-%m-%d') + '...')
-				ss.append("{}:{}@{}".format(k, nicesize(self._usage_bytes[k]), self._last_accessed[k].strftime('%H:%M:%S')))
+				ss.append("{}:{}@{}".format(
+					k,
+					nicesize(self._usage_bytes[k]),
+					self._last_accessed[k].strftime('%H:%M:%S')
+				))
 		return "{}@{}: [{}]".format(str(self), hex(id(self)), ', '.join(ss))
 
 
@@ -138,7 +157,14 @@ class DfMemCache(Generic[K]):
 	def archive(self, at_least: Optional[int] = None) -> List[K]:
 		it = self._policy.items()
 		archived = []
-		while self._policy.can_archive() and (at_least is not None and len(archived) < at_least or self._policy.should_archive()):
+		while (
+				self._policy.can_archive()
+				and (
+					at_least is not None
+					and len(archived) < at_least
+					or self._policy.should_archive()
+				)
+		):
 			key = next(it)
 			self._policy.removed(key)
 			del self._items[key]

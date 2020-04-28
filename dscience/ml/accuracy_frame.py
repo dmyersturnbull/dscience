@@ -55,11 +55,6 @@ class AccuracyFrame(OrganizingFrame):
 		lower = AccuracyFrame(pd.concat(data)).groupby('label').quantile(1 - q).rename(columns={'label': 'lower'})['lower']
 		return BaseFrame(pd.merge(upper, lower, left_index=True, right_index=True))
 
-	@classmethod
-	def read_csv(cls, path: PathLike, *args, **kwargs):
-		path = Path(path)
-		return AccuracyFrame(pd.read_csv(path))
-
 
 class AccuracyFrames:
 

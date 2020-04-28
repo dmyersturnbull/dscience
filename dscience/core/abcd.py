@@ -84,7 +84,13 @@ class Utils:
 	@classmethod
 	def var_values(cls, obj, only, exclude):
 		items = vars(obj).items()
-		return [value for key, value in items if ((only is None) or key in only) and not exclude(key) and value is not None]
+		return [
+			value
+			for key, value in items
+			if (
+				(only is None) or key in only
+			) and not exclude(key) and value is not None
+		]
 
 	@classmethod
 	def auto_hash(cls, self, only: Optional[Set[str]], exclude: Optional[Callable[[str], bool]]):
@@ -165,7 +171,14 @@ def auto_html(
 	@wraps(auto_html)
 	def dec(cls):
 		def __html(self):
-			return SpecialStr(Utils.gen_str(self, only=only, exclude=exclude, with_address=with_address, bold_surround = lambda c: '<strong>' + c + '</strong>', em_surround = lambda c: '<em>' + c + '</em>'))
+			return SpecialStr(Utils.gen_str(
+				self,
+				only=only,
+				exclude=exclude,
+				with_address=with_address,
+				bold_surround = lambda c: '<strong>' + c + '</strong>',
+				em_surround = lambda c: '<em>' + c + '</em>'
+			))
 		cls._repr_html = __html
 		return cls
 	return dec
@@ -180,7 +193,8 @@ def auto_repr_str(
 	Decorator.
 	Auto-adds __repr__, __str__, and __md that show the attributes:
 		- __str__ will include attributes in neither exclude_all nor exclude_simple
-		- _repr_html_ will include attributes in neither exclude_all nor exclude_simple and will show the hexadecimal address
+		- _repr_html_ will include attributes in neither exclude_all nor exclude_simple
+			and will show the hexadecimal address
 		- __repr__ will include attributes not in exclude_all and will show the hexadecimal address
 	The _repr_html_ will be used by Jupyter display.
 	Examples:
@@ -196,7 +210,14 @@ def auto_repr_str(
 		def __str(self):
 			return Utils.gen_str(self, only=None, exclude=exclude_simple, with_address=False)
 		def __html(self):
-			return SpecialStr(Utils.gen_str(self, only=None, exclude=exclude_html, with_address=True, bold_surround = lambda c: '<strong>' + c + '</strong>', em_surround = lambda c: '<em>' + c + '</em>'))
+			return SpecialStr(Utils.gen_str(
+				self,
+				only=None,
+				exclude=exclude_html,
+				with_address=True,
+				bold_surround = lambda c: '<strong>' + c + '</strong>',
+				em_surround = lambda c: '<em>' + c + '</em>'
+			))
 		def __repr(self):
 			return Utils.gen_str(self, only=None, exclude=exclude_all, with_address=True)
 		cls.__str__ = __str
@@ -216,7 +237,15 @@ def auto_info(only: Optional[Set[str]] = None, exclude: Optional[Callable[[str],
 	@wraps(auto_info)
 	def dec(cls):
 		def __info(self):
-			return InfoSpecialStr(Utils.gen_str(self, delim='\n\t', eq=' = ', opening='(\n\t', closing='\n)', with_address=False, only=only, exclude=exclude))
+			return InfoSpecialStr(Utils.gen_str(
+				self,
+				delim='\n\t',
+				eq=' = ',
+				opening='(\n\t', closing='\n)',
+				with_address=False,
+				only=only,
+				exclude=exclude
+			))
 		cls.info = __info
 		return cls
 	return dec
@@ -230,7 +259,13 @@ def auto_obj():
 	def __str(self):
 		return Utils.gen_str(self, exclude=lambda a: a.startswith('_'), with_address=False)
 	def __html(self):
-		return SpecialStr(Utils.gen_str(self, only=None, exclude=lambda a: a.startswith('_'), with_address=True, bold_surround = lambda c: '<strong>' + c + '</strong>'))
+		return SpecialStr(Utils.gen_str(
+			self,
+			only=None,
+			exclude=lambda a: a.startswith('_'),
+			with_address=True,
+			bold_surround = lambda c: '<strong>' + c + '</strong>'
+		))
 	def __repr(self):
 		return Utils.gen_str(self, exclude=lambda _: False, with_address=True)
 	def __hash(self):

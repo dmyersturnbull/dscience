@@ -25,7 +25,12 @@ class BaseTools:
 		)
 
 	@classmethod
-	def only(cls, sequence: Iterable[Any], condition: Union[str, Callable[[Any], bool]] = None, name: str = 'collection') -> Any:
+	def only(
+			cls,
+			sequence: Iterable[Any],
+			condition: Union[str, Callable[[Any], bool]] = None,
+			name: str = 'collection'
+	) -> Any:
 		"""
 		Returns either the SINGLE (ONLY) UNIQUE ITEM in the sequence or raises an exception.
 		Each item must have __hash__ defined on it.
@@ -44,7 +49,14 @@ class BaseTools:
 				raise LookupError("Empty " + str(name))
 			return next(iter(st))
 		if condition and isinstance(condition, str):
-			return _only([s for s in sequence if (not getattr(s, condition[1:]) if condition.startswith('!') else getattr(s, condition))])
+			return _only([
+				s for s in sequence
+				if (
+					not getattr(s, condition[1:])
+					if condition.startswith('!')
+					else getattr(s, condition)
+				)
+			])
 		elif condition:
 			return _only([s for s in sequence if condition(s)])
 		else:
@@ -91,7 +103,10 @@ class BaseTools:
 		try:
 			return list(cls.zip_strict(*args))
 		except LengthMismatchError:
-			raise LengthMismatchError("Length mismatch in zip_strict: Sizes are {}".format([len(x) for x in args])) from None
+			raise LengthMismatchError(
+				"Length mismatch in zip_strict: Sizes are {}"
+				.format([len(x) for x in args])
+			) from None
 
 	@classmethod
 	def forever(cls) -> Iterator[int]:
@@ -145,14 +160,16 @@ class BaseTools:
 	@classmethod
 	def look(cls, obj: Y, attrs: Union[str, Iterable[str], Callable[[Y], Z]]) -> Optional[Z]:
 		"""
-		Returns the value of a chain of attributes on object `obj`, or None any object in that chain is None or lacks the next attribute.
+		Returns the value of a chain of attributes on object `obj`,
+		or None any object in that chain is None or lacks the next attribute.
 		For example::
 			CommonTools.look(kitten), 'breed.name')  # either None or a string
 		:param obj: Any object
 		:param attrs: One of:
 				- A string in the form attr1.attr2, translating to `obj.attr1`
 				- An iterable of strings of the attributes
-				- A function that maps `obj` to its output; equivalent to calling `attrs(obj)` but returning None on `AttributeError`.
+				- A function that maps `obj` to its output;
+				equivalent to calling `attrs(obj)` but returning None on `AttributeError`.
 		:return: Either None or the type of the attribute
 		:raises: TypeError
 		"""

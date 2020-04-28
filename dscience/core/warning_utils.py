@@ -1,6 +1,7 @@
 import os
 from copy import copy
 import warnings
+from dscience.core.exceptions import NotConstructableError
 
 class GlobalWarningUtils:
 	"""
@@ -14,7 +15,7 @@ class GlobalWarningUtils:
 	```
 	"""
 	def __init__(self):
-		raise NotImplementedError("Do not instantiate {}".format(self.__class__.__name__))
+		raise NotConstructableError("Do not instantiate {}".format(self.__class__.__name__))
 
 	@classmethod
 	def init(cls):
@@ -58,6 +59,7 @@ class GlobalWarningUtils:
 			.substring_never("Monkey-patching ssl after ssl has already been imported may lead to errors")
 			.substring_never("your performance may suffer as PyTables will pickle object types that it cannot map directly to c-types")
 			.substring_once('Trying to unpickle estimator')
+			.substring_once("Passing require_full to OrganizingFrame.convert is deprecated")
 		)
 
 	@classmethod

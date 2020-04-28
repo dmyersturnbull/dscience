@@ -49,7 +49,8 @@ class PathTools(BaseTools):
 		"""
 		path = Path(path)
 		exists = path.exists()
-		# On some platforms we get generic exceptions like permissions errors, so these are better
+		# On some platforms we get generic exceptions like permissions errors,
+		# so these are better
 		if exists and not path.is_dir():
 			raise DirDoesNotExistError("Path {} exists but is not a file".format(path))
 		if exists and not exist_ok:
@@ -83,7 +84,8 @@ class PathTools(BaseTools):
 		Sanitizes a path for major OSes and filesystems.
 		Also see sanitize_path_nodes and sanitize_path_node.
 		Platform-dependent.
-		A corner case is drive letters in Linux: "C:\\Users\\john" is converted to '/C:/users/john' if os.name=='posix'
+		A corner case is drive letters in Linux:
+		"C:\\Users\\john" is converted to '/C:/users/john' if os.name=='posix'
 		:param path:
 		:param is_file:
 		:param show_warnings:
@@ -166,7 +168,9 @@ class PathTools(BaseTools):
 				return bit
 			m = re.compile(r'^([A-Z]:)(?:\\)?$').fullmatch(bit)
 			# this is interesting
-			# for bit=='C:' and is_root_or_drive=None, it could be either a drive letter or a file path that should be corrected to 'C_'
+			# for bit=='C:' and is_root_or_drive=None,
+			# it could be either a drive letter
+			# or a file path that should be corrected to 'C_'
 			# I guess here we're going with a drive letter
 			if m is not None:
 				# we need C:\ and not C: because:

@@ -59,11 +59,17 @@ class LogLevel:
 
 	@classmethod
 	def standard(cls) -> Mapping[str, int]:
-		return {e.name: e.value for e in [_LogLevel.DEBUG, _LogLevel.INFO, _LogLevel.WARNING, _LogLevel.ERROR, _LogLevel.CRITICAL]}
+		return {
+			e.name: e.value
+			for e in [_LogLevel.DEBUG, _LogLevel.INFO, _LogLevel.WARNING, _LogLevel.ERROR, _LogLevel.CRITICAL]
+		}
 
 	@classmethod
 	def nonstandard(cls) -> Mapping[str, int]:
-		return {e.name: e.value for e in [_LogLevel.TRACE, _LogLevel.MINOR, _LogLevel.CAUTION, _LogLevel.NOTICE]}
+		return {
+			e.name: e.value
+			for e in [_LogLevel.TRACE, _LogLevel.MINOR, _LogLevel.CAUTION, _LogLevel.NOTICE]
+		}
 
 	@classmethod
 	def initalize(cls):
@@ -102,7 +108,11 @@ class AdvancedLogger(logging.Logger):
 	```
 	"""
 	@contextmanager
-	def suppressed(self, suppress: bool = True, universe: bool = False) -> Generator[None, None, None]:
+	def suppressed(
+			self,
+			suppress: bool = True,
+			universe: bool = False
+	) -> Generator[None, None, None]:
 		"""
 		Temporarily suppresses logging from kale, and globally if `universe=True`.
 		Yields as a context manager.
@@ -121,7 +131,12 @@ class AdvancedLogger(logging.Logger):
 					logging.disable(logging.NOTSET)
 
 	@contextmanager
-	def suppressed_other(self, name: str, suppress: bool = True, below: Union[int, str] = logging.ERROR) -> Generator[None, None, None]:
+	def suppressed_other(
+			self,
+			name: str,
+			suppress: bool = True,
+			below: Union[int, str] = logging.ERROR
+	) -> Generator[None, None, None]:
 		"""
 		Temporarily suppress logging for another logger name.
 		Yields as a context manager.

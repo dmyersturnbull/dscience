@@ -6,7 +6,8 @@ from dscience.core.exceptions import FileDoesNotExistError, ContradictoryRequest
 class Connection:
 	"""
 	Convenient way to open a database connection through an SSH tunnel for Pewee or raw SQL.
-	You can use an existing tunnel by giving it a local port (local_bind_port) or have it create a new one by giving it an SSH hostname.
+	You can use an existing tunnel by giving it a local port (local_bind_port)
+	or have it create a new one by giving it an SSH hostname.
 	Example usage:
 	with Connection(db_name, db_user, db_password) as db:
 		db.connect_with_peewee()     # don't worry, this will be closed with the GlobalConnection
@@ -40,7 +41,10 @@ class Connection:
 		self.plain_sql_database = None
 		self.peewee_database = None
 		if (ssh_host is None) == (local_bind_port is None):
-			raise ContradictoryRequestError("Must specify either an SSH host to create a tunnel, or the local bind port of an existing tunnel (but not both)")
+			raise ContradictoryRequestError(
+				"Must specify either an SSH host to create a tunnel,"
+				"or the local bind port of an existing tunnel (but not both)"
+			)
 		self._local_bind_port = local_bind_port
 		self._db_username = db_username
 		self._db_password = db_password
@@ -82,7 +86,11 @@ class Connection:
 
 	def connect_with_plain_sql(self):
 		import pymysql
-		self.plain_sql_database = pymysql.connect(**self._connection_params(), db=self._db_name, cursorclass=pymysql.cursors.DictCursor)
+		self.plain_sql_database = pymysql.connect(
+			**self._connection_params(),
+			db=self._db_name,
+			cursorclass=pymysql.cursors.DictCursor
+		)
 		logging.debug("Opened raw pymysql connection to database {}".format(self._db_name))
 
 	def execute(self, statement: str, vals: Tuple = ()) -> None:

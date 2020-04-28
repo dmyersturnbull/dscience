@@ -133,7 +133,10 @@ class ConfusionMatrix(SimpleFrame):
 		:return: A dictionary mapping class names to their new positions (starting at 0)
 		"""
 		if not self.is_symmetric():
-			raise AmbiguousRequestError("Unclear how to sort because rows {} and columns {} differ".format(self.rows, self.columns))
+			raise AmbiguousRequestError(
+				"Unclear how to sort because rows {} and columns {} differ"
+				.format(self.rows, self.columns)
+			)
 		optimized = simulated_annealing(self.values, **kwargs)
 		perm = list(reversed(optimized['perm']))
 		perm = {name: perm.index(i) for i, name in enumerate(self.rows)}
@@ -157,12 +160,18 @@ class ConfusionMatrix(SimpleFrame):
 		:return: A new ConfusionMatrix with sorted rows and columns
 		"""
 		if not self.is_symmetric():
-			raise AmbiguousRequestError("Unclear how to sort because rows {} and columns {} differ".format(self.rows, self.columns))
+			raise AmbiguousRequestError(
+				"Unclear how to sort because rows {} and columns {} differ"
+				.format(self.rows, self.columns)
+			)
 		if isinstance(permutation, Sequence):
 			if set(permutation) != set(self.rows):
 				permutation = {name: i for i, name in enumerate(permutation)}
 			else:
-				raise RefusingRequestError("{} permutation elements instead of {}. See `sort_first`.".format(len(permutation), len(self)))
+				raise RefusingRequestError(
+					"{} permutation elements instead of {}. See `sort_first`."
+					.format(len(permutation), len(self))
+				)
 		data = self.reindex(sorted(self.rows, key=lambda s: permutation[s]), axis=1)
 		xx = [permutation[name] for name in self.rows]
 		data['__sort'] = xx
@@ -217,16 +226,26 @@ class ConfusionMatrices:
 		matrices = [m.unsort() for m in matrices]
 		rows, cols, mx0 = matrices[0].rows, matrices[0].columns, matrices[0]
 		if any((not m.is_symmetric() for m in matrices)):
-			raise RefusingRequestError("Refusing to average matrices because for at least one matrix the rows and columns are different")
+			raise RefusingRequestError(
+				"Refusing to average matrices because"
+				"for at least one matrix the rows and columns are different"
+			)
 		for m in matrices[1:]:
 			if m.rows != rows:
-				raise RefusingRequestError("At least one confusion matrix has different rows than another (or different columns than another)")
+				raise RefusingRequestError(
+					"At least one confusion matrix has different rows than another"
+					"(or different columns than another)"
+				)
 			mx0 += m
 		# noinspection PyTypeChecker
 		return ConfusionMatrix((1.0 / len(matrices)) * mx0)
 
 	@classmethod
-	def agg_matrices(cls, matrices: Sequence[ConfusionMatrix], aggregation: Callable[[Sequence[pd.DataFrame]], None]) -> ConfusionMatrix:
+	def agg_matrices(
+			cls,
+			matrices: Sequence[ConfusionMatrix],
+			aggregation: Callable[[Sequence[pd.DataFrame]], None]
+	) -> ConfusionMatrix:
 		"""
 		Averages a list of confusion matrices.
 		:param matrices: An iterable of ConfusionMatrices (does not need to be a list)

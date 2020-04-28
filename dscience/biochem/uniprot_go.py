@@ -25,7 +25,14 @@ class FlatGoTerm:
 		sourceId (str); ex: IDA
 		sourceName (str); ex: UniProtKB
 	"""
-	def __init_(self, identifier: str, kind: str, description: str, source_id: str, source_name: str):
+	def __init_(
+			self,
+			identifier: str,
+			kind: str,
+			description: str,
+			source_id: str,
+			source_name: str
+	):
 		self.ID = identifier
 		self.kind = kind
 		self.description = description
@@ -38,7 +45,10 @@ class FlatGoTerm:
 		"""
 		match = go_pattern.search(stwing)
 		if match is None:
-			raise StringPatternError('String didn\'t match GO term pattern: {}'.format(stwing), value=stwing, pattern=go_pattern)
+			raise StringPatternError(
+				"String didn't match GO term pattern: {}".format(stwing),
+				value=stwing, pattern=go_pattern
+			)
 		self.ID = 'GO:' + match.group(1)
 		self.kind = match.group(2)
 		self.description = match.group(3)
@@ -122,7 +132,12 @@ class GoTermsAtLevel:
 		traverse_up(self.query_obo_term(term_id), terms, level)
 		return terms
 
-	def go_term_ancestors_for_uniprot_id(self, uniprot_id: str, level: int, kinds_allowed: Optional[List[str]] = None) -> Iterable[GOTerm]:
+	def go_term_ancestors_for_uniprot_id(
+			self,
+			uniprot_id: str,
+			level: int,
+			kinds_allowed: Optional[List[str]] = None
+	) -> Iterable[GOTerm]:
 		"""
 		Gets the GO terms associated with a UniProt ID and returns a set of their ancestors at the specified level.
 		The traversal is restricted to is-a relationships.
@@ -139,8 +154,13 @@ class GoTermsAtLevel:
 			ancestor_terms.update(self.get_ancestors_of_go_term(term_id, level))
 		return ancestor_terms
 
-	def go_term_ancestors_for_uniprot_id_as_df(self, uniprot_id: str, level: int, kinds_allowed: Optional[List[str]] = None) -> pd.DataFrame:
-		if kinds_allowed is None: kinds_allowed =  ['P', 'F', 'C']
+	def go_term_ancestors_for_uniprot_id_as_df(
+			self,
+			uniprot_id: str,
+			level: int,
+			kinds_allowed: Optional[List[str]] = None
+	) -> pd.DataFrame:
+		if kinds_allowed is None: kinds_allowed = ['P', 'F', 'C']
 		"""See go_term_ancestors_for_uniprot_id. Returns a Pandas DataFrame with columns IDand name."""
 		df = pd.DataFrame(columns=['ID', 'name'])
 		for term in self.go_term_ancestors_for_uniprot_id(uniprot_id, level, kinds_allowed):

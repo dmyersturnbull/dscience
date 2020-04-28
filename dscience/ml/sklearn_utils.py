@@ -8,7 +8,13 @@ from typing import Sequence
 class ClassificationUtils:
 
 	@classmethod
-	def viz_tree(cls, tree: DecisionTreeClassifier, classes: Sequence[str], path: PathLike, **kwargs) -> Path:
+	def viz_tree(
+			cls,
+			tree: DecisionTreeClassifier,
+			classes: Sequence[str],
+			path: PathLike,
+			**kwargs
+	) -> Path:
 		"""
 		Plots a single tree from a DecisionTreeClassifier to a path.
 		"""

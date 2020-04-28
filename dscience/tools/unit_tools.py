@@ -14,10 +14,12 @@ class UnitTools(BaseTools):
 	@classmethod
 	def delta_time_to_str(cls, delta_sec: float, space: str = '') -> str:
 		"""
-		Returns a pretty string from a difference in time in seconds. Rounds hours and minutes to 2 decimal places, and seconds to 1.
+		Returns a pretty string from a difference in time in seconds.
+		Rounds hours and minutes to 2 decimal places, and seconds to 1.
 		Ex: delta_time_to_str(313) == 5.22min
 		:param delta_sec: The time in seconds
-		:param space: Space char between digits and units; good choices are empty, ASCII space, Chars.narrownbsp, Chars.thinspace, and Chars.nbsp.
+		:param space: Space char between digits and units;
+				good choices are empty, ASCII space, Chars.narrownbsp, Chars.thinspace, and Chars.nbsp.
 		:return: A string with units 'hr', 'min', or 's'
 		"""
 		if abs(delta_sec) > 60*60*3:
@@ -37,7 +39,8 @@ class UnitTools(BaseTools):
 			- 5d:10:15:33  if > 1 day
 		Prepends a minus sign (−) if negative.
 		:param ms: The milliseconds
-		:param space: Space char between digits and 'ms' or 'd' for day (if used); good choices are empty, ASCII space, Chars.narrownbsp, Chars.thinspace, and Chars.nbsp.
+		:param space: Space char between digits and 'ms' or 'd' for day (if used);
+		good choices are empty, ASCII space, Chars.narrownbsp, Chars.thinspace, and Chars.nbsp.
 		:return: A string of one of the formats above
 		"""
 		is_neg = ms < 0
@@ -81,7 +84,14 @@ class UnitTools(BaseTools):
 			return 0  # can't take the log of 0
 
 	@classmethod
-	def nice_dose(cls, micromolar_dose: float, n_sigfigs: Optional[int] = 5, adjust_units: bool = True, use_sigfigs: bool = True, space: str = '') -> str:
+	def nice_dose(
+			cls,
+			micromolar_dose: float,
+			n_sigfigs: Optional[int] = 5,
+			adjust_units: bool = True,
+			use_sigfigs: bool = True,
+			space: str = ''
+	) -> str:
 		"""
 		Returns a dose with units, with the units scaled as needed.
 		Can handle millimolar, micromolar, nanomolar, and picomolar.
@@ -89,7 +99,8 @@ class UnitTools(BaseTools):
 		:param micromolar_dose: The dose in micromolar
 		:param n_sigfigs: For rounding; no rounding if None
 		:param adjust_units: If False, will always use micromolar
-		:param space: Space char between digits and units; good choices are empty, ASCII space, Chars.narrownbsp, Chars.thinspace, and Chars.nbsp.
+		:param space: Space char between digits and units;
+		good choices are empty, ASCII space, Chars.narrownbsp, Chars.thinspace, and Chars.nbsp.
 		:return: The dose with a suffix of µM, mM, nM, or mM
 		"""
 		d = micromolar_dose

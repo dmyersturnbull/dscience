@@ -279,7 +279,11 @@ class PeakFinder:
 
         """
         if len(max_distances) < matr.shape[0]:
-            raise OutOfRangeError('Max_distances must have at least as many rows as matr', value=len(max_distances), minimum=matr.shape[0])
+            raise OutOfRangeError(
+            'Max_distances must have at least as many rows as matr',
+            value=len(max_distances),
+            minimum=matr.shape[0]
+            )
 
         all_max_cols = PeakFinder._boolrelextrema(matr, np.greater, axis=1, order=1)
         # Highest row for which there are any relative maxima
@@ -415,7 +419,13 @@ class PeakFinder:
     def find_peaks_cwt(
             cls,
             vector, widths,
-            wavelet=None, max_distances=None, gap_thresh=None, min_length=None, min_snr=1, noise_perc=10, noise_window_size=None
+            wavelet=None,
+            max_distances=None,
+            gap_thresh=None,
+            min_length=None,
+            min_snr=1,
+            noise_perc=10,
+            noise_window_size=None
     ):
         """
         Find peaks in a 1-D array with wavelet transformation.

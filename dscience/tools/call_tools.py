@@ -26,7 +26,11 @@ class CallTools(BaseTools):
 
 	@classmethod
 	@contextlib.contextmanager
-	def silenced(cls, no_stdout: bool = True, no_stderr: bool = True) -> Generator[None, None, None]:
+	def silenced(
+			cls,
+			no_stdout: bool = True,
+			no_stderr: bool = True
+	) -> Generator[None, None, None]:
 		"""
 		Context manager that suppresses stdout and stderr.
 		"""
@@ -45,9 +49,15 @@ class CallTools(BaseTools):
 		return subprocess.run(*[str(c) for c in cmd], capture_output=True, check=True, **kwargs)
 
 	@classmethod
-	def call_cmd_utf(cls, *cmd: str, log_fn: Callable[[str], None] = logger.error, **kwargs) -> subprocess.CompletedProcess:
+	def call_cmd_utf(
+			cls,
+			*cmd: str,
+			log_fn: Callable[[str], None] = logger.error,
+			**kwargs
+	) -> subprocess.CompletedProcess:
 		"""
-		Like `call_cmd`, but sets `text=True` and `encoding=utf8`, and strips stdout and stderr of start/end whitespace before returning.
+		Like `call_cmd`, but sets `text=True` and `encoding=utf8`,
+		and strips stdout and stderr of start/end whitespace before returning.
 		Can also log formatted stdout and stderr on failure.
 		Otherwise, logs the output, unformatted and unstripped, as TRACE
 		"""
@@ -56,7 +66,14 @@ class CallTools(BaseTools):
 		if 'cwd' in kwargs and isinstance(kwargs['path'], PurePath):
 			kwargs['cwd'] = str(kwargs['cwd'])
 		try:
-			x = subprocess.run(*[str(c) for c in cmd], capture_output=True, check=True, text=True, encoding='utf8', **kwargs)
+			x = subprocess.run(
+				*[str(c) for c in cmd],
+				capture_output=True,
+				check=True,
+				text=True,
+				encoding='utf8',
+				**kwargs
+			)
 			logger.debug("stdout: '{}'".format(x.stdout))
 			logger.debug("stderr: '{}'".format(x.stdout))
 			x.stdout = x.stdout.strip()
@@ -83,7 +100,13 @@ class CallTools(BaseTools):
 				The full line can be longer than this because the text of the command is not wrapped
 		"""
 		wrap_length = max(10, wrap_length)
-		log_fn("Failed on command:[\n{}\n]".format(textwrap.indent("\n".join(['"' + x + '"' for x in e.cmd]), '\t')))
+		log_fn(
+			"Failed on command:[\n{}\n]"
+			.format(textwrap.indent(
+				"\n".join(['"' + x + '"' for x in e.cmd]),
+				'\t')
+			)
+		)
 		log_fn("Received exit code {}".format(e.returncode))
 		if e.stdout is not None and len(e.stdout.strip()) > 0:
 			log_fn(' STDOUT '.center(wrap_length, '.'))

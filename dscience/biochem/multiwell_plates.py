@@ -90,7 +90,12 @@ class _WB(abcd.ABC):
 			yield self.index_to_label(i)
 
 	def __check_rc_range(self, row: int, column: int):
-		if row < self.base or row > self.n_rows * self.n_columns or column < self.base or column > self.n_rows * self.n_columns + self.base - 1:
+		if (
+				row < self.base
+				or row > self.n_rows * self.n_columns
+				or column < self.base
+				or column > self.n_rows * self.n_columns + self.base - 1
+		):
 			raise OutOfRangeError("{}-based coordinates {} out of range".format(self.base, (row, column)))
 
 	def __check_index_range(self,i: int):
@@ -110,7 +115,8 @@ class _WB(abcd.ABC):
 		return "WB{}({}×{})".format(self.base, self.n_rows, self.n_columns)
 
 	def _ind_to_label(self, index: int) -> str:
-		"""Returns a 3-character well identifier like A52. Note that the default is landscape indexing (8 rows and 12 columns).
+		"""Returns a 3-character well identifier like A52.
+		Note that the default is landscape indexing (8 rows and 12 columns).
 
 		Modified from https://stackoverflow.com/questions/19170420/converting-well-number-to-the-identifier-on-a-96-well-plate.
 		"""

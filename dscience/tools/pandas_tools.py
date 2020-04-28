@@ -38,12 +38,27 @@ class PandasTools(BaseTools):
 		return cls.df_to_dict(d)
 
 	@classmethod
-	def dict_to_df(cls, dct: Mapping[Any, Any], keys: str = 'name', values: str = 'value') -> pd.DataFrame:
+	def dict_to_df(
+			cls,
+			dct: Mapping[Any, Any],
+			keys: str = 'name',
+			values: str = 'value'
+	) -> pd.DataFrame:
 		dct = dict(dct)
-		return pd.DataFrame.from_dict(dct, orient='index').reset_index().rename(columns={'index': keys, 0: values})
+		return (
+			pd.DataFrame.from_dict(dct, orient='index')
+			.reset_index()
+			.rename(columns={'index': keys, 0: values})
+		)
 
 	@classmethod
-	def dict_to_csv(cls, dct: Mapping[Any, Any], path: PathLike, keys: str = 'name', values: str = 'value') -> None:
+	def dict_to_csv(
+			cls,
+			dct: Mapping[Any, Any],
+			path: PathLike,
+			keys: str = 'name',
+			values: str = 'value'
+	) -> None:
 		cls.dict_to_df(dct, keys, values).to_csv(Path(path))
 
 	@classmethod

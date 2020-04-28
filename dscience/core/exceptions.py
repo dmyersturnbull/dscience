@@ -129,6 +129,7 @@ class DataWarning(XWarning):                     """External data is suspicious 
 class IllegalStateError(Error, AssertionError):  """An assertion failed marking invalid state, potentially recoverable."""
 
 class UnsupportedOpError(Error):                 """Used as a replacement for NotImplementedError, where the method SHOULD NOT be implemented."""
+class NotConstructableError(UnsupportedOpError): """Constructing this object is not supported. It's probably a singleton, static utils, or has factory methods."""
 @ErrorUtils.args(class_name=str)
 class ImmutableError(UnsupportedOpError):        """Tried to mutate an immutable object."""
 class OpStateError(UnsupportedOpError):          """The operation cannot be performed on an object in this state."""
@@ -191,6 +192,7 @@ class InexactRoundError(_NumericError):          """A floating-point number coul
 @ErrorUtils.args(key=KeyLike)
 class _KeyError(Error, KeyError):                """KeyError that contains the failed key"""
 class MissingColumnError(_KeyError):             """Missing column in a DataFrame"""
+class UnexpectedColumnError(_KeyError):          """Unexpected column in a DataFrame"""
 
 # parsing files or similar resources
 @ErrorUtils.args(resource=Any)

@@ -13,6 +13,17 @@ T = TypeVar('T', covariant=True)
 
 logger = logging.getLogger('dscience')
 
+
+class Sentinel:
+	"""
+	A sentinel value tied to nothing more than a memory address.
+	"""
+	@classmethod
+	def new(cls) -> Sentinel:
+		return Sentinel()
+	def __init__(self):
+		pass
+
 class JsonEncoder(json.JSONEncoder):
 	def default(self, obj):
 		if isinstance(obj, np.ndarray):
@@ -107,7 +118,8 @@ class SmartEnum(enum.Enum):
 	@classmethod
 	def of(cls, v):
 		"""
-		Returns the member of this enum class from a string with the member's name, case-insentive and stripping whitespace.
+		Returns the member of this enum class from a string with the member's name,
+		case-insentive and stripping whitespace.
 		Will return ``v`` if ``v`` is already an instance of this class.
 		"""
 		if isinstance(v, cls):
@@ -210,4 +222,4 @@ class OptRow:
 		# noinspection PyProtectedMember
 		return self._row == other._row
 
-__all__ = ['JsonEncoder', 'SmartEnum', 'frozenlist', 'PathLike', 'OptRow', 'LazyWrap']
+__all__ = ['Sentinel', 'JsonEncoder', 'SmartEnum', 'frozenlist', 'PathLike', 'OptRow', 'LazyWrap']

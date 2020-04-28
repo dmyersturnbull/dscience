@@ -127,7 +127,14 @@ class OpenMode(str):
 	# noinspection PyMissingConstructor
 	def __init__(self, mode: str):
 		self._raw = mode.replace('w', 'o')
-		self.internal = self._raw.replace('o', 'w').replace('s', 'w').replace('z', '').replace('i', '').replace('d', '')
+		self.internal = (
+			self._raw
+				.replace('o', 'w')
+				.replace('s', 'w')
+				.replace('z', '')
+				.replace('i', '')
+				.replace('d', '')
+		)
 	def __repr__(self): return self.internal
 	def __str__(self): return self.internal
 	@property

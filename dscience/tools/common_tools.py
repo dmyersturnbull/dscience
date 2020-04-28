@@ -19,7 +19,12 @@ class CommonTools(BaseTools):
 			yield x
 
 	@classmethod
-	def try_none(cls, function: Callable[[], T], fail_val: Optional[T] = None, exception=Exception) -> Optional[T]:
+	def try_none(
+			cls,
+			function: Callable[[], T],
+			fail_val: Optional[T] = None,
+			exception=Exception
+	) -> Optional[T]:
 		"""
 		Returns the value of a function or None if it raised an exception.
 		:param function: Try calling this function
@@ -45,7 +50,12 @@ class CommonTools(BaseTools):
 		return or_else if cls.is_null(x) else dtype(x)
 
 	@classmethod
-	def or_raise(cls, x: Any, dtype=lambda s: s, or_else: Union[None, BaseException, Type[BaseException]] = None) -> Any:
+	def or_raise(
+			cls,
+			x: Any,
+			dtype=lambda s: s,
+			or_else: Union[None, BaseException, Type[BaseException]] = None
+	) -> Any:
 		"""
 		Returns `dtype(x)` if `x` is not None, or raises `or_else`.
 		"""
@@ -129,7 +139,8 @@ class CommonTools(BaseTools):
 			- None if the sequence has no attribute `attr`
 		WARNING: Tries to call `next(x)`, progressing iterators.
 		:param collection: Any iterable
-		:param attr: The name of the attribute that might be defined on the elements, or None to indicate the elements themselves should be used
+		:param attr: The name of the attribute that might be defined on the elements,
+		or None to indicate the elements themselves should be used
 		:return: The first element, or None
 		"""
 		try:
