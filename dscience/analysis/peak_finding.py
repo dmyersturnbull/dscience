@@ -1,14 +1,14 @@
 """
 Functions for identifying peaks in signals.
 """
-from __future__ import division, print_function, absolute_import
-import math
+
 import numpy as np
-from scipy._lib.six import xrange
-from scipy.signal.wavelets import cwt, ricker
 from scipy.stats import scoreatpercentile
+from scipy.signal.wavelets import cwt, ricker
 from scipy.signal._peak_finding_utils import _peak_prominences
+
 from dscience.core.exceptions import OutOfRangeError, WrongDimensionError
+
 
 class PeakFinder:
 
@@ -165,7 +165,7 @@ class PeakFinder:
         elif 1 < wlen:
             # Round up to next positive integer; rounding up to next odd integer
             # happens implicitly inside the inner function
-            wlen = int(math.ceil(wlen))
+            wlen = int(np.ceil(wlen))
         else:
             # Give feedback if wlen has unexpected value
             raise OutOfRangeError('`wlen` must be at larger than 1, was ' + str(wlen))
@@ -222,7 +222,7 @@ class PeakFinder:
 
         results = np.ones(data.shape, dtype=bool)
         main = data.take(locs, axis=axis, mode=mode)
-        for shift in xrange(1, order + 1):
+        for shift in range(1, order + 1):
             plus = data.take(locs + shift, axis=axis, mode=mode)
             minus = data.take(locs - shift, axis=axis, mode=mode)
             results &= comparator(main, plus)

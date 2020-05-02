@@ -2,9 +2,11 @@ from __future__ import annotations
 import logging
 from typing import Set, Sequence, Union, Callable, Mapping
 from copy import deepcopy
+
 import numpy as np
 import pandas as pd
 from clana.visualize_cm import simulated_annealing
+
 from dscience.core import PathLike
 from dscience.core.exceptions import *
 from dscience.core.extended_df import *
@@ -53,6 +55,9 @@ class ConfusionMatrix(SimpleFrame):
 		return ConfusionMatrix(vals, index=self.rows, columns=self.columns)
 
 	def diagonals(self) -> np.array:
+        """
+        Returns diagonal elements.
+        """
 		return np.array([self.iat[i, i] for i in range(len(self))])
 
 	def off_diagonals_quantiles(self, q: float = 0.5) -> np.array:
@@ -143,7 +148,7 @@ class ConfusionMatrix(SimpleFrame):
 		logger.info("Permutation for rows {}: {}".format(self.rows, perm))
 		return perm
 
-	def unsort(self) -> ConfusionMatrix:
+	def sort_alphabetical(self) -> ConfusionMatrix:
 		"""
 		Sort by the labels alphabetically.
 		"""
@@ -179,6 +184,9 @@ class ConfusionMatrix(SimpleFrame):
 		return ConfusionMatrix(data)
 
 	def sort_first(self, first: Sequence[str]) -> ConfusionMatrix:
+        """
+        Put these elements first.
+        """
 		first = [*first, *[r for r in self.rows if r not in first]]
 		permutation = {name: i for i, name in enumerate(first)}
 		return self.sort_with(permutation)

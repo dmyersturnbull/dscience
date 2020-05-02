@@ -76,7 +76,8 @@ def look(obj: Y, attrs: Union[str, Iterable[str], Callable[[Y], Z]]) -> Optional
 	elif not callable(attrs):
 		raise TypeError(
 			"Type {} unrecognized for key/attribute. Must be a function, a string, or a sequence of strings"
-			.format(type(attrs)))
+			.format(type(attrs))
+		)
 	try:
 		return attrs(obj)
 	except AttributeError:

@@ -20,11 +20,7 @@ class AbstractSaveLoad(metaclass=abc.ABCMeta):
 
 class SaveableTrainable(AbstractSaveLoad):
 	"""
-	A simpler saveable.
-	Assumes the model has attributes:
-		- training_wells
-		- training_names
-		- statistics
+	A simpler saveable.=
 	Saves and loads a .info file with these properties.
 	To implement, just override save() and load(), and have each call its supermethod
 	"""
@@ -37,12 +33,17 @@ class SaveableTrainable(AbstractSaveLoad):
 	def load(self, path: PathLike):
 		path = Path(path)
 		self.info = FilesysTools.load_json(path.with_suffix(path.suffix + '.info'))
-		def fix(*ss, kind=None):
-			for s in ss:
-				if s in self.info:
-					self.info[s] = kind(self.info[s])
-		fix('started', 'finished', kind=datetime.isoformat)
-		fix('features', 'wells', 'labels', np.array)
+		def fix(key, value):
+			if key in ['started', 'finished']:
+				return datetime.isoformat(value)
+			elif isinstance(value, list):
+				return np.array(value)
+			else:
+				return value
+		self.info = {
+			k: fix(k, v)
+			for k, v in self.info.items()
+		}
 		return self
 
 
@@ -81,7 +82,7 @@ class SaveLoadCsv(AbstractSaveLoad, metaclass=abc.ABCMeta):
 
 	def save(self, path: PathLike):
 		if not isinstance(self.data, self.df_class):
-			raise TypeError("Type {} is not a DataFrame".format(type(self.data)))
+			raise TypeError("Type {} is not a {}".format(type(self.data), self.df_class))
 		path = Path(path)
 		pd.DataFrame(self.data).to_csv(path)
 

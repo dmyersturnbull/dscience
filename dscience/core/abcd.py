@@ -2,24 +2,14 @@
 A collection of decorators.
 """
 import enum
-#from typing import final
-from typing import Optional, Callable, Set, Type
+from typing import Optional, Callable, Set, Type, final
 import signal, time
 from warnings import warn
 from functools import wraps
 from abc import abstractmethod, ABC, ABCMeta
 from functools import total_ordering
 from dataclasses import dataclass
-try:
-	from overrides import overrides
-except ImportError:
-	def overrides(c):
-		return c
-try:
-	from deprecated import deprecated
-except ImportError:
-	def deprecated(c):
-		return c
+
 from dscience.core.exceptions import ImmatureWarning, DeprecatedWarning, ObsoleteWarning, CodeIncompleteError
 
 
@@ -468,23 +458,6 @@ def auto_singleton(cls):
 		return instances[cls]
 	return get_instance
 
-
-def auto_timeout(seconds: int):
-	@wraps(auto_timeout)
-	def dec(func):
-		def _handle_timeout(the_signal, the_frame):
-			raise TimeoutError("The call timed out")
-		def my_fn(*args, **kwargs):
-			signal.signal(signal.SIGALRM, _handle_timeout)
-			signal.alarm(seconds)
-			try:
-				result = func(*args, **kwargs)
-			finally:
-				signal.alarm(0)
-			return result
-		return wraps(func)(my_fn)
-	return dec
-
 @enum.unique
 class CodeStatus(enum.Enum):
 	Incomplete = 0
@@ -526,12 +499,35 @@ def status(level: CodeStatus):
 	return dec
 
 
-def override_point(cls):
+@status(CodeStatus.Immature)
+def auto_timeout(seconds: int):
+	@wraps(auto_timeout)
+	def dec(func):
+		def _handle_timeout(the_signal, the_frame):
+			raise TimeoutError("The call timed out")
+		def my_fn(*args, **kwargs):
+			signal.signal(signal.SIGALRM, _handle_timeout)
+			signal.alarm(seconds)
+			try:
+				result = func(*args, **kwargs)
+			finally:
+				signal.alarm(0)
+			return result
+		return wraps(func)(my_fn)
+	return dec
+
+
+def overrides(cls):
 	"""
 	Decorator. Overriding this class is generally recommended (but not required).
 	"""
 	return cls
-override_recommended = override_point
+
+def suggested_override(cls):
+	"""
+	Decorator. Overriding this class is suggested.
+	"""
+	return cls
 
 def internal(cls):
 	"""
@@ -560,7 +556,7 @@ def not_thread_safe(cls):
 
 
 __all__ = [
-	'dataclass',
+	'dataclass', "final",
 	'auto_repr_str', 'auto_str', 'auto_repr', 'auto_html', 'auto_info',
 	'auto_eq', 'auto_hash', 'total_ordering',
 	'auto_obj',
@@ -572,8 +568,7 @@ __all__ = [
 	'iterable_over', 'collection_over', 'sequence_over',
 	'float_type', 'int_type',
 	'abstractmethod', 'ABC', 'ABCMeta',
-	'override_recommended', 'override_point', 'overrides',
-	'deprecated',
+	'suggested_override', 'overrides',
 	'internal', 'external', 'reserved',
 	'thread_safe', 'not_thread_safe',
 	'CodeStatus'

@@ -1,0 +1,176 @@
+[metadata]
+description-file = "README.md"
+
+[build-system]
+requires = ["poetry>=1.0", "coverage[toml]"]
+build-backend = "poetry.masonry.api"
+
+
+#########################################################################################
+# Tyrannosaurus
+#########################################################################################
+
+[tool.tyrannosaurus.sources]
+status     = "'Development'"
+date       = "${today}"
+copyright  = "'Copyright (2015–${today.year})'"
+
+[tool.tyrannosaurus.targets]
+tox          = true
+hooks        = false
+
+
+#########################################################################################
+# Poetry metadata
+#########################################################################################
+
+[tool.poetry]
+name = "dscience"
+version = "0.0.4"
+description = "A collection of Python general-purpose, bioinformatics, cheminformatics, and data science utilities."
+authors = ["Chris Ki", "Douglas Myers-Turnbull", "Cole Helsell", "the Kokel Lab @ UCSF", "the Keiser Lab @ UCSF", "UCSF"]
+maintainers = ["Douglas Myers-Turnbull"]
+license = "Apache-2.0"
+readme = "README.md"
+keywords = ['utilities', 'data science', 'bioinformatics', 'cheminformatics', 'pandas']
+homepage = "https://github.com/kokellab/dscience"
+repository = "https://github.com/kokellab/dscience"
+documentation = "https://dscience.readthedocs.io"
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Natural Language :: English",
+    "License :: OSI Approved :: Apache Software License",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.6",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+	"Intended Audience :: Developers",
+	"Intended Audience :: Science/Research",
+    "Operating System :: OS Independent",
+    "Topic :: Science/Research",
+	'Topic :: Software Development :: Libraries :: Python Modules',
+	'Topic :: Scientific/Engineering :: Bio-Informatics',
+	'Topic :: Scientific/Engineering :: Chemistry',
+	'Topic :: Scientific/Engineering :: Artificial Intelligence'
+]
+include = [
+	"README.md",
+	"LICENSE.txt",
+	"CHANGES.md",
+	"dscience/resources"
+]
+[tool.poetry.urls]
+build = "https://travis-ci.org/kokellab/dscience"
+issues = "https://github.com/kokellab/dscience/issues"
+source = "https://github.com/kokellab/dscience"
+
+
+
+#########################################################################################
+# Poetry build & dependencies
+#########################################################################################
+
+[tool.poetry.dependencies]
+python                 = ">=3.7"
+tomlkit                = "^0.6"
+dill                   = "^0.3"
+jsonpickle             = "^1.3"
+natsort                = "^7.0"
+numpy                  = "^1.18"
+pandas                 = "^1.0"
+requests               = "^2.23"
+
+joblib                 = {optional = true, version = "^0.14"}
+scikit-image           = {optional = true, version = "^0.16"}
+scikit-learn           = {optional = true, version = "^0.22"}
+scipy                  = {optional = true, version = "^1.4"}
+
+matplotlib             = {optional = true, version = "^3.2"}
+
+PyMySQL                = {optional = true, version = "^0.9"}
+peewee                 = {optional = true, version = "^3.13"}
+sshtunnel              = {optional = true, version = "^0.1"}
+
+goatools               = {optional = true, version = "^1.0"}
+uniprot                = {optional = true, version = "^1.3"}
+
+colorama               = {optional = true, version = "^0.4"}
+psutil                 = {optional = true, version = "^5.7"}
+
+ipython                = {optional = true, version = "^7.13"}
+
+
+[tool.poetry.dev-dependencies]
+pre-commit            = "^2.3"
+pytest                = "^5.4"
+hypothesis            = "^5.8"
+pytest-cov            = "^2.8"
+sphinx                = "^3.0"
+sphinx-autoapi        = "^1.3"
+sphinx-rtd-theme      = "^0.4.3"
+mypy                  = "^0.750"
+flake8                = "^3.7"
+flake8-docstrings     = "^1.5"
+black                 = "=19.10b0"
+isort                 = "^4.3"
+#coverage              = {extras = ["toml"], version = "^5.1"}
+#tyrannosaurus         = "^0.0.2"
+
+
+[tool.poetry.extras]
+numeric   = ["joblib", "scipy", "scikit-learn", "scikit-image"]
+plot      = ["matplotlib"]
+db        = ["PyMySQL", "peewee", "sshtunnel"]
+biochem   = ["goatools", "uniprot"]
+console   = ["colorama", "psutil"]
+notebook  = ["ipython"]
+
+dev = [
+	"pre-commit", "pytest", "hypothesis", "coverage",
+	"sphinx", "sphinx-autodoc-typehits", "autoapi",
+	"mypy",
+	"flake8", "flake8-docstrings",
+	"black", "isort"
+]
+all  = [
+	"joblib", "scipy", "scikit-learn", "scikit-image",
+	"matplotlib",
+	"PyMySQL", "peewee", "sshtunnel",
+	"goatools", "uniprot",
+	"colorama", "psutil",
+	"ipython"
+]
+
+
+
+
+#########################################################################################
+# Style checking
+#########################################################################################
+
+[tool.coverage.paths]
+source = ["dscience"]
+
+[tool.coverage.run]
+source = ["dscience"]
+
+[tool.coverage.report]
+show_missing = true
+
+[tool.black]
+line-length = 100
+target-version = ["py36", "py37", "py38"]
+
+[tool.isort]
+line_length = 100
+[mypy]
+check_untyped_defs = true
+strict_optional = true
+
+[pycodestyle]
+max-line-length = 100
+statistics = true
+
+[pydocstyle]
+# 212 and 213 contradict; 203 and 204 contradict; D302 is not relevant in Py3
+ignore = ["D203", "D212", "D302"]

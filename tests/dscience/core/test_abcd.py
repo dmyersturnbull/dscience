@@ -1,6 +1,7 @@
 import pytest
 import re
 from dscience.core import abcd
+from dscience.core.exceptions import CodeIncompleteError
 raises = pytest.raises
 warns = pytest.warns
 
@@ -38,9 +39,12 @@ class TestAbcd:
 		assert float(x) == 5.0
 
 	def test_status(self):
+		@abcd.status(abcd.CodeStatus.Incomplete)
+		def x(): pass
+		with raises(CodeIncompleteError):
+			x()
 		@abcd.status(abcd.CodeStatus.Deprecated)
-		def x():
-			pass
+		def x(): pass
 		with warns(DeprecationWarning):
 			x()
 		@abcd.status(abcd.CodeStatus.Immature)
@@ -49,8 +53,7 @@ class TestAbcd:
 		with warns(abcd.ImmatureWarning):
 			y()
 		@abcd.status(abcd.CodeStatus.Stable)
-		def z():
-			pass
+		def z(): pass
 		with warns(None):
 			z()
 

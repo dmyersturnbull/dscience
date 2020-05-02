@@ -17,7 +17,6 @@ class MockWritable:
 	def close(self):
 		self.data += 'close'
 
-
 class MockCallable:
 	def __init__(self):
 		self.data = None

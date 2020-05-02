@@ -6,7 +6,7 @@ import pandas as pd
 from natsort import ns, natsorted
 from pandas.core.frame import DataFrame as _InternalDataFrame
 from dscience.tools.common_tools import CommonTools
-from dscience.core.exceptions import MissingColumnError, UnexpectedColumnError
+from dscience.core.exceptions import MissingColumnError, UnexpectedColumnError, IgnoringRequestWarning
 from dscience.core import PathLike, Sentinel
 import dscience.core.abcd as abcd
 
@@ -343,14 +343,14 @@ class OrganizingFrame(ConvertibleFrame):
 	@classmethod
 	def read_csv(cls, path: PathLike, *args, **kwargs):
 		if 'index_col' in kwargs:
-			warn("index_col={} in OrganizingFrame.read_csv is ignored".format(kwargs['index_col']))
+			warn("index_col={} in OrganizingFrame.read_csv is ignored".format(kwargs['index_col']), IgnoringRequestWarning)
 			kwargs = {k: v for k, v in kwargs if k!='index_col'}
 		df = pd.read_csv(Path(path), index_col=False, **kwargs)
 		return cls.convert(df)
 
 	def to_csv(self, path: PathLike, *args, **kwargs) -> Optional[str]:
 		if 'index' in kwargs:
-			warn("index={} in OrganizingFrame.to_csv is ignored".format(kwargs['index']))
+			warn("index={} in OrganizingFrame.to_csv is ignored".format(kwargs['index']), IgnoringRequestWarning)
 		df = self.to_vanilla().reset_index()
 		return df.to_csv(path, index=False)
 

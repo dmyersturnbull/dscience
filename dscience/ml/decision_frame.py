@@ -6,7 +6,7 @@ import pandas as pd
 from dscience.core.exceptions import *
 from dscience.core.extended_df import *
 from dscience.ml.confusion_matrix import *
-from dscience.ml.accuracy_frame import *
+from kale.ml.accuracy_frames import *
 
 
 class DecisionFrame(OrganizingFrame):
