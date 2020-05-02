@@ -523,7 +523,7 @@ def overrides(cls):
 	"""
 	return cls
 
-def suggested_override(cls):
+def override_recommended(cls):
 	"""
 	Decorator. Overriding this class is suggested.
 	"""
@@ -568,7 +568,7 @@ __all__ = [
 	'iterable_over', 'collection_over', 'sequence_over',
 	'float_type', 'int_type',
 	'abstractmethod', 'ABC', 'ABCMeta',
-	'suggested_override', 'overrides',
+	'override_recommended', 'overrides',
 	'internal', 'external', 'reserved',
 	'thread_safe', 'not_thread_safe',
 	'CodeStatus'
