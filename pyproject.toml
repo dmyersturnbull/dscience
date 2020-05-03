@@ -124,6 +124,9 @@ biochem   = ["goatools", "uniprot"]
 console   = ["colorama", "psutil"]
 notebook  = ["ipython"]
 
+docs = [
+	"sphinx", "sphinx-rtd-theme", "sphinx-autoapi", "tomlkit"
+]
 dev = [
 	"pre-commit", "pytest", "hypothesis", "coverage",
 	"sphinx", "sphinx-autodoc-typehits", "autoapi",
@@ -131,7 +134,7 @@ dev = [
 	"flake8", "flake8-docstrings",
 	"black", "isort"
 ]
-all  = [
+all = [
 	"joblib", "scipy", "scikit-learn", "scikit-image",
 	"matplotlib",
 	"PyMySQL", "peewee", "sshtunnel",
