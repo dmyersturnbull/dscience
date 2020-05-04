@@ -14,8 +14,11 @@ repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v2.3.0
     hooks:
+      - id: check-added-large-files
       - id: trailing-whitespace
-        exclude: ^tests/.*/fixtures/.*
       - id: end-of-file-fixer
-        exclude: ^tests/.*/fixtures/.*
       - id: debug-statements
+      - id: forbid-space-in-indent
+      - id: mixed-line-ending
+        args:
+          - --fix=lf

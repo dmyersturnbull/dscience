@@ -18,11 +18,21 @@ from dscience.core.exceptions import *
 from dscience.core.iterators import *
 from dscience.core import SmartEnum, OptRow
 
+
 class Tools(
-	CallTools, CommonTools, ConsoleTools, LoopTools, NumericTools, PandasTools,
-	PathTools, ProgramTools, StringTools, FilesysTools, UnitTools
+    CallTools,
+    CommonTools,
+    ConsoleTools,
+    LoopTools,
+    NumericTools,
+    PandasTools,
+    PathTools,
+    ProgramTools,
+    StringTools,
+    FilesysTools,
+    UnitTools,
 ):
-	"""
-	A collection of utility static functions.
-	Mostly provided for use outside of Kale, but can also be used by Kale code.
-	"""
+    """
+    A collection of utility static functions.
+    Mostly provided for use outside of Kale, but can also be used by Kale code.
+    """

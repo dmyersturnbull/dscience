@@ -12,7 +12,6 @@ Table of contents
    ml
    biochem
    organization
-   toc
 
 * :ref:`genindex`
 * :ref:`modindex`

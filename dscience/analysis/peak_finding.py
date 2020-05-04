@@ -11,7 +11,6 @@ from dscience.core.exceptions import OutOfRangeError, WrongDimensionError
 
 
 class PeakFinder:
-
     @classmethod
     def peak_prominences(cls, x, peaks, wlen=None):
         """
@@ -144,9 +143,9 @@ class PeakFinder:
         and a smaller prominence is calculated.
         """
         # Inner function expects `x` to be C-contiguous
-        x = np.asarray(x, order='C', dtype=np.float64)
+        x = np.asarray(x, order="C", dtype=np.float64)
         if x.ndim != 1:
-            raise WrongDimensionError('`x` must have exactly one dimension')
+            raise WrongDimensionError("`x` must have exactly one dimension")
 
         peaks = np.asarray(peaks)
         if peaks.size == 0:
@@ -154,11 +153,11 @@ class PeakFinder:
             peaks = np.array([], dtype=np.intp)
         try:
             # Safely convert to C-contiguous array of type np.intp
-            peaks = peaks.astype(np.intp, order='C', casting='safe', subok=False, copy=False)
+            peaks = peaks.astype(np.intp, order="C", casting="safe", subok=False, copy=False)
         except TypeError:
             raise TypeError("Cannot safely cast `peaks` to dtype('intp')")
         if peaks.ndim != 1:
-            raise WrongDimensionError('`peaks` must have exactly one dimension')
+            raise WrongDimensionError("`peaks` must have exactly one dimension")
 
         if wlen is None:
             wlen = -1  # Inner function expects int -> None == -1
@@ -168,12 +167,12 @@ class PeakFinder:
             wlen = int(np.ceil(wlen))
         else:
             # Give feedback if wlen has unexpected value
-            raise OutOfRangeError('`wlen` must be at larger than 1, was ' + str(wlen))
+            raise OutOfRangeError("`wlen` must be at larger than 1, was " + str(wlen))
 
         return _peak_prominences(x, peaks, wlen)
 
     @classmethod
-    def _boolrelextrema(cls, data, comparator, axis=0, order=1, mode='clip'):
+    def _boolrelextrema(cls, data, comparator, axis=0, order=1, mode="clip"):
         """
         Calculate the relative extrema of `data`.
 
@@ -214,8 +213,8 @@ class PeakFinder:
         array([False, False,  True, False, False], dtype=bool)
 
         """
-        if(int(order) != order) or (order < 1):
-            raise OutOfRangeError('Order must be an int >= 1')
+        if (int(order) != order) or (order < 1):
+            raise OutOfRangeError("Order must be an int >= 1")
 
         datalen = data.shape[axis]
         locs = np.arange(0, datalen)
@@ -280,9 +279,9 @@ class PeakFinder:
         """
         if len(max_distances) < matr.shape[0]:
             raise OutOfRangeError(
-            'Max_distances must have at least as many rows as matr',
-            value=len(max_distances),
-            minimum=matr.shape[0]
+                "Max_distances must have at least as many rows as matr",
+                value=len(max_distances),
+                minimum=matr.shape[0],
             )
 
         all_max_cols = PeakFinder._boolrelextrema(matr, np.greater, axis=1, order=1)
@@ -293,10 +292,7 @@ class PeakFinder:
         start_row = has_relmax[-1]
         # Each ridge line is a 3-tuple:
         # rows, cols, Gap number
-        ridge_lines = [
-            [[start_row], [col], 0]
-            for col in np.where(all_max_cols[start_row])[0]
-        ]
+        ridge_lines = [[[start_row], [col], 0] for col in np.where(all_max_cols[start_row])[0]]
         final_lines = []
         rows = np.arange(start_row - 1, -1, -1)
         cols = np.arange(0, matr.shape[1])
@@ -344,7 +340,7 @@ class PeakFinder:
                     del ridge_lines[ind]
 
         out_lines = []
-        for line in (final_lines + ridge_lines):
+        for line in final_lines + ridge_lines:
             sortargs = np.array(np.argsort(line[0]))
             rows, cols = np.zeros_like(sortargs), np.zeros_like(sortargs)
             rows[sortargs] = line[0]
@@ -354,7 +350,9 @@ class PeakFinder:
         return out_lines
 
     @classmethod
-    def _filter_ridge_lines(cls, cwt, ridge_lines, window_size=None, min_length=None, min_snr=1, noise_perc=10):
+    def _filter_ridge_lines(
+        cls, cwt, ridge_lines, window_size=None, min_length=None, min_snr=1, noise_perc=10
+    ):
         """
         Filter ridge lines according to prescribed criteria. Intended
         to be used for finding relative maxima.
@@ -417,15 +415,16 @@ class PeakFinder:
 
     @classmethod
     def find_peaks_cwt(
-            cls,
-            vector, widths,
-            wavelet=None,
-            max_distances=None,
-            gap_thresh=None,
-            min_length=None,
-            min_snr=1,
-            noise_perc=10,
-            noise_window_size=None
+        cls,
+        vector,
+        widths,
+        wavelet=None,
+        max_distances=None,
+        gap_thresh=None,
+        min_length=None,
+        min_snr=1,
+        noise_perc=10,
+        noise_window_size=None,
     ):
         """
         Find peaks in a 1-D array with wavelet transformation.
@@ -529,9 +528,12 @@ class PeakFinder:
         cwt_dat = cwt(vector, wavelet, widths)
         ridge_lines = PeakFinder._identify_ridge_lines(cwt_dat, max_distances, gap_thresh)
         filtered = PeakFinder._filter_ridge_lines(
-            cwt_dat, ridge_lines,
-            min_length=min_length, min_snr=min_snr,
-            noise_perc=noise_perc, window_size=noise_window_size
+            cwt_dat,
+            ridge_lines,
+            min_length=min_length,
+            min_snr=min_snr,
+            noise_perc=noise_perc,
+            window_size=noise_window_size,
         )
         max_locs = np.asarray([x[1][0] for x in filtered])
         max_locs.sort()
@@ -539,4 +541,4 @@ class PeakFinder:
         return max_locs
 
 
-__all__ = ['PeakFinder']
+__all__ = ["PeakFinder"]
