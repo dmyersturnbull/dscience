@@ -10,28 +10,12 @@ status](https://readthedocs.org/projects/dscience/badge/?version=latest&style=fl
 [![Travis](https://travis-ci.org/kokellab/dscience.svg?branch=master)](https://travis-ci.org/kokellab/dscience)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
-A lightweight Python 3 library for everyday coding, data science, and bioinformatics.
-Integrated with Numpy and Pandas 1.0+, with few other dependencies.
+A collection of experimental Python functions for data science, statistics, and math.
 
-Provides:
-- Many utility functions, data types, and decorators
-- Exceptions that store useful attributes to help calling code recover
-- Pandas DataFrames with required columns / enforced structure and extra methods
-- Simple utilities for Jupyter notebooks
-- Algorithms, bioinformatics resources, and machine learning support
+**WARNING:** Currently a bit broken.
 
+[See the docs](https://dscience.readthedocs.io/en/stable/), or just [browse the code](https://github.com/dmyersturnbull/dscience/tree/master/dscience).
 
-## contributing
-
-This project is under active development. [New issues](https://github.com/kokellab/dscience/issues) and pull requests are welcome.
-We use tabs for indentation and will eventually use [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/).
-
-## license
-
-The authors release these contents and documentation files under the terms of the [Apache License, version 2.0](https://www.apache.org/licenses/LICENSE-2.0).
-The project was developed to support research at the Kokel Lab, fulfill requirements for [UCSF QBC](http://qbc.ucsf.edu/) PhD programs, and be useful to the public.
-
-Authors and contributors:
-- Douglas Myers-Turnbull (primary)
-- Chris Ki (contributor)
-- Cole Helsell (contributor)
+[New issues](https://github.com/dmyersturnbull/dscience/issues) and pull requests are welcome.
+Please refer to the [contributing guide](https://github.com/dmyersturnbull/dscience/blob/master/CONTRIBUTING.md).
+Generated with [Tyrannosaurus](https://github.com/dmyersturnbull/tyrannosaurus).

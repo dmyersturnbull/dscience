@@ -26,15 +26,15 @@ hooks        = false
 
 [tool.poetry]
 name = "dscience"
-version = "0.0.2"
-description = "A collection of Python general-purpose, bioinformatics, cheminformatics, and data science utilities."
-authors = ["Chris Ki", "Douglas Myers-Turnbull", "Cole Helsell", "the Kokel Lab @ UCSF", "the Keiser Lab @ UCSF", "UCSF"]
+version = "0.1.0"
+description = "A collection experimental functions for data science, statistics, and math."
+authors = ["Chris Ki", "Douglas Myers-Turnbull", "Cole Helsell"]
 maintainers = ["Douglas Myers-Turnbull"]
 license = "Apache-2.0"
 readme = "README.md"
 keywords = ['utilities', 'data science', 'bioinformatics', 'cheminformatics', 'pandas']
-homepage = "https://github.com/kokellab/dscience"
-repository = "https://github.com/kokellab/dscience"
+homepage = "https://github.com/dmyersturnbull/dscience"
+repository = "https://github.com/dmyersturnbull/dscience"
 documentation = "https://dscience.readthedocs.io"
 classifiers = [
     "Development Status :: 3 - Alpha",
@@ -46,22 +46,21 @@ classifiers = [
     "Intended Audience :: Developers",
     "Intended Audience :: Science/Research",
     "Operating System :: OS Independent",
-    "Topic :: Science/Research",
     'Topic :: Software Development :: Libraries :: Python Modules',
-    'Topic :: Scientific/Engineering :: Bio-Informatics',
-    'Topic :: Scientific/Engineering :: Chemistry',
-    'Topic :: Scientific/Engineering :: Artificial Intelligence'
+    "Topic :: Science/Research",
+	"Topic :: Scientific/Engineering :: Artificial Intelligence",
+	"Topic :: Scientific/Engineering :: Image Recognition",
+    "Topic :: Scientific/Engineering :: Mathematics"
 ]
 include = [
     "README.md",
     "LICENSE.txt",
-    "CHANGES.md",
-    "dscience/resources"
+    "CHANGES.md"
 ]
 [tool.poetry.urls]
-build = "https://travis-ci.org/kokellab/dscience"
-issues = "https://github.com/kokellab/dscience/issues"
-source = "https://github.com/kokellab/dscience"
+CI = "https://github.com/dmyersturnbull/dscience/actions"
+Issues = "https://github.com/dmyersturnbull/dscience/issues"
+Download = "https://pypi.org/project/dscience/"
 
 
 
@@ -70,7 +69,7 @@ source = "https://github.com/kokellab/dscience"
 #########################################################################################
 
 [tool.poetry.dependencies]
-python                 = ">=3.7"
+python                 = ">=3.7, <4.0"
 tomlkit                = "^0.6"
 dill                   = "^0.3"
 jsonpickle             = "^1.3"

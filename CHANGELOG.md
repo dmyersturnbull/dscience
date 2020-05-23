@@ -4,12 +4,11 @@ Adheres to the [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 and [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) recommendations.
 
 
-## [0.1.0] - unreleased
-
-This will be the first usable version.
-
-
 ## [0.0.2] - 2020-05-02
+
+### Removed
+- Most code, which was moved to other repos.
+
 
 ### Changed
 - The `ExtendedFrame` models.
